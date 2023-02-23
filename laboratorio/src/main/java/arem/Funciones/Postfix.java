@@ -47,7 +47,7 @@ public class Postfix {
 
     private Integer getPrecedence(Character operador){
         Integer precedencia = precedence.get(operador);
-        return precedencia; //== null ? 6 : precedencia;
+        return precedencia == null ? 6 : precedencia;
     };
 
     //Metodo de conversion a postfix

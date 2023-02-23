@@ -10,8 +10,8 @@ import java.util.Stack;
 public class RevisionEx {
     private String expresion;
     
-    private boolean correcta;
     private boolean sus = false;
+    private Boolean correcta = null;
     
     private static final Map<Integer, String> errorMes;
     
@@ -69,16 +69,17 @@ public class RevisionEx {
 
                 //Revisa que no haya parentesis en blanco
                 if (c == '('){
-                    stack.push(c);
                     if (expresion.charAt(i + 1) == ')'){
                         errorM = 2;
                         correcta = false;
+                        break;
                     }
+                    stack.push(c);
                 }else if (c == ')'){
                     stack.pop();
                 }
                 
-                //Revisa si hay mas de un operador seguido
+                //Revisa los operadores
                 if (operadores.contains(c)){
                     if (c == '?' || c == '+'){
                         sus = true;
@@ -98,9 +99,10 @@ public class RevisionEx {
             }
             this.expresion = newE;
     
-            if (stack.isEmpty()){
+            if (stack.isEmpty() && correcta == null){
                 correcta = true;
-            }else{
+            }
+            if (!stack.isEmpty()){
                 correcta = false;
                 errorM = 1;
             }
