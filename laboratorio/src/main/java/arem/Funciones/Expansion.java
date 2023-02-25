@@ -8,11 +8,10 @@ public class Expansion {
     }
 
     public Expansion(String expresion) {
-        this.expresion = expresion;
-        exExpre();
+        this.expresion = exExpre(expresion);
     }
 
-    public void exExpre(){
+    public String exExpre(String expresion){
         String newE = "";
         for (int i = 0; i < expresion.length(); i++){
             char c = expresion.charAt(i);
@@ -27,6 +26,8 @@ public class Expansion {
                     i += 1;
                     c = expresion.charAt(i);
                 }
+                //Recursion
+                cache = exExpre(cache);
                 i += 1;
                 c = expresion.charAt(i);
                 if (c == '?'){
@@ -61,6 +62,7 @@ public class Expansion {
                 continue;
             }
         }
-        expresion = newE;
+        return newE;
     }
 }
+
