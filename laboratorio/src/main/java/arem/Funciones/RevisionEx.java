@@ -1,9 +1,7 @@
 package arem.Funciones;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -32,7 +30,7 @@ public class RevisionEx {
         return expresion;
     }
     
-    public boolean isCorrectaa() {
+    public boolean isCorrecta() {
         return correcta;
     }
 
@@ -56,16 +54,15 @@ public class RevisionEx {
         int errorM = 0;
         
         Stack<Character> stack = new Stack<Character>();
-        List<Character> operadores = Arrays.asList('|', '?', '*', '+', '^');
         String newE = "";
         char c;
-        if (!operadores.contains(expresion.charAt(0))){
+        if (!Lenguaje.operadoresIniciales.contains(expresion.charAt(0))){
             for (int i = 0; i < expresion.length(); i++){
                 c = expresion.charAt(i);
                 //Elimina los espacion vacios
-                if (c == ' '){
-                    continue;
-                }
+                // if (c == ' '){
+                //     continue;
+                // }
 
                 //Revisa que no haya parentesis en blanco
                 if (c == '('){
@@ -80,7 +77,7 @@ public class RevisionEx {
                 }
                 
                 //Revisa los operadores
-                if (operadores.contains(c)){
+                if (Lenguaje.operadoresIniciales.contains(c)){
                     if (c == '?' || c == '+'){
                         sus = true;
                     }

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Stack;
 
 public class Postfix {    
-    private static final Map<Character, Integer> precedence;
+    public static final Map<Character, Integer> precedence;
     
     static {
         Map<Character, Integer> REs = new HashMap<>();
