@@ -1,0 +1,26 @@
+graph {
+  fill-mode: gradient-radial;
+  fill-color: white, #eeeeee;
+}
+
+node {
+  size: 20px; 
+  fill-color: #555; 
+  text-color: white; 
+  text-size: 20; 
+  text-alignment: center; 
+}
+
+node#A {
+  fill-color: blue;
+}
+
+node:clicked {
+  fill-color: red;
+}
+
+edge {
+  arrow-size: 20px, 5px;
+  arrow-shape: arrow;
+  fill-color: black;
+}
