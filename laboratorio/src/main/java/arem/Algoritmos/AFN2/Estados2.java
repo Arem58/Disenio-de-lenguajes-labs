@@ -2,13 +2,18 @@ package arem.Algoritmos.AFN2;
 
 public class Estados2 {
     private int id;
+    private boolean visitado;
+
+    public void setVisitado() {
+        this.visitado = true;
+    }
 
     public int getId() {
         return id;
     }
 
-    public Estados2(int id) {
-        this.id = id;
+    public Estados2() {
+        this.id = AFN2.stateCount;
         AFN2.stateCount ++;
     }
 

@@ -1,21 +1,19 @@
 package arem.Algoritmos.AFN2;
 
-import java.lang.reflect.GenericArrayType;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import arem.Funciones.Lenguaje;
 
 public class AFN2 {
     private String expresion;
     private Stack<GE> stack;
     private GE ge;
     
-    private Map<Integer, Map<Character, Set<Integer>>> transitions = new HashMap<>();
-    static int stateCount;
+    public static int stateCount;
     
     public GE getGe() {
         return ge;
@@ -49,8 +47,14 @@ public class AFN2 {
                     break;
 
                 default:
-                    Estados2 entrada = new Estados2(stateCount);
-                    Estados2 salida = new Estados2(stateCount);
+                    if (!Lenguaje.lenguajeInicial.contains(c)){
+                        break;
+                    }
+                    if (Lenguaje.nuevoSimb.containsKey(c))
+                        c = Lenguaje.nuevoSimb.get(c);
+                        
+                    Estados2 entrada = new Estados2();
+                    Estados2 salida = new Estados2();
                     Transiciones2 transicion = new Transiciones2(c, entrada, salida);
                     Set<Estados2> estados = new HashSet<>(Set.of(entrada, salida));
                     GE ge = new GE(entrada, salida, transicion.getTransicion(), estados);
@@ -73,8 +77,8 @@ public class AFN2 {
         estados.addAll(ge1.getListaEstados());
 
         //Ahora se van a crear las transiciones que son con nuevos estados
-        Estados2 nueEntrada = new Estados2(stateCount);
-        Estados2 nueSalida = new Estados2(stateCount);
+        Estados2 nueEntrada = new Estados2();
+        Estados2 nueSalida = new Estados2();
 
         //Se agrega las transiciones del estado salida 
         Set<Estados2> transiciones = new HashSet<>();
@@ -114,8 +118,8 @@ public class AFN2 {
         estados.addAll(geAbajo.getListaEstados());
 
         //Ahora se van a crear las transiciones que son con nuevos estados
-        Estados2 nueEntrada = new Estados2(stateCount);
-        Estados2 nueSalida = new Estados2(stateCount);
+        Estados2 nueEntrada = new Estados2();
+        Estados2 nueSalida = new Estados2();
 
         //Se agregan las transiciones del estado nueEntrada
         Set<Estados2> transiciones = new HashSet<>();

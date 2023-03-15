@@ -4,11 +4,11 @@ graph {
 }
 
 node {
-  size: 20px; 
-  fill-color: #555; 
-  text-color: white; 
-  text-size: 20; 
-  text-alignment: center; 
+  size: 20px;
+  fill-color: #555;
+  text-color: white;
+  text-size: 20;
+  text-alignment: center;
 }
 
 node#A {
@@ -23,4 +23,7 @@ edge {
   arrow-size: 20px, 5px;
   arrow-shape: arrow;
   fill-color: black;
+  text-size: 15px;
+  text-color: white;
+  text-style: bold;
 }
