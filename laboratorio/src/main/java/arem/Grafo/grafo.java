@@ -9,14 +9,14 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
-import arem.Algoritmos.AFN2.Estados2;
 import arem.Algoritmos.AFN2.GE;
+import arem.Algoritmos.interfaces.estados;
 
-public class grafo {
+public class grafo<T extends estados> {
 
-    private GE ge;
+    private GE<T> ge;
 
-    public grafo(GE ge) {
+    public grafo(GE<T> ge) {
         this.ge = ge;
         graficar();
     }
@@ -26,35 +26,50 @@ public class grafo {
 
         Graph graph = new SingleGraph("Ejemplo de flechas");
 
-        for(Estados2 estado: ge.getListaEstados()){
-            if (ge.getEntrada().equals(estado)){
-                Node nodo = graph.addNode(estado.toString());
-                nodo.setAttribute("ui.label", estado.toString());
-                nodo.setAttribute("ui.style", "fill-color: blue;");
-            }else if (ge.getSalida().equals(estado)){
-                Node nodo = graph.addNode(estado.toString());
-                nodo.setAttribute("ui.label", estado.toString());
-                nodo.setAttribute("ui.style", "fill-color: red;");
-            }else{
-                Node nodo = graph.addNode(estado.toString());
-                nodo.setAttribute("ui.label", estado.toString());
+        for (T estado : ge.getListaEstados()) {
+            Node nodo = graph.addNode(estado.toString());
+            switch (estado.getIdentificador()) {
+                case FINAL:
+                    nodo.setAttribute("ui.label", estado.toString());
+                    nodo.setAttribute("ui.style", "fill-color: red;");
+                    break;
+                case INICIAL:
+                    nodo.setAttribute("ui.label", estado.toString());
+                    nodo.setAttribute("ui.style", "fill-color: blue;");
+                    break;
+                case NORMAL:
+                    nodo.setAttribute("ui.label", estado.toString());
+                    break;
             }
+            // if (ge.getEntrada().equals(estado)) {
+            //     Node nodo = graph.addNode(estado.toString());
+            //     nodo.setAttribute("ui.label", estado.toString());
+            //     nodo.setAttribute("ui.style", "fill-color: blue;");
+            // } else if (ge.getSalida().equals(estado)) {
+            //     Node nodo = graph.addNode(estado.toString());
+            //     nodo.setAttribute("ui.label", estado.toString());
+            //     nodo.setAttribute("ui.style", "fill-color: red;");
+            // } else {
+            //     Node nodo = graph.addNode(estado.toString());
+            //     nodo.setAttribute("ui.label", estado.toString());
+            // }
         }
 
-        for (Map.Entry<Estados2, Map<Character, Set<Estados2>>> entry : ge.getTransitions().entrySet()) {
-            Estados2 estado = entry.getKey();
-            Map<Character, Set<Estados2>> transitionMap = entry.getValue(); // Mapa interno de transiciones
+        for (Map.Entry<T, Map<Character, Set<T>>> entry : ge.getTransitions().entrySet()) {
+            T estado = entry.getKey();
+            Map<Character, Set<T>> transitionMap = entry.getValue(); // Mapa interno de transiciones
 
             // Recorrer el mapa interno de transiciones
-            for (Map.Entry<Character, Set<Estados2>> transitionEntry : transitionMap.entrySet()) {
+            for (Map.Entry<Character, Set<T>> transitionEntry : transitionMap.entrySet()) {
                 char symbol = transitionEntry.getKey(); // Símbolo de entrada
-                Set<Estados2> destinationStates = transitionEntry.getValue(); // Conjunto de estados de destino
+                Set<T> destinationStates = transitionEntry.getValue(); // Conjunto de estados de destino
 
                 // Recorrer el conjunto de estados de destino
-                for (Estados2 destState : destinationStates) {
-                    Edge edge = graph.addEdge(estado.toString() + destState.toString(), estado.toString(), destState.toString(), true);
-                    Edge recursor = graph.getEdge(destState.toString() + estado.toString() );
-                    if (recursor != null){
+                for (T destState : destinationStates) {
+                    Edge edge = graph.addEdge(estado.toString() + destState.toString(), estado.toString(),
+                            destState.toString(), true);
+                    Edge recursor = graph.getEdge(destState.toString() + estado.toString());
+                    if (recursor != null) {
                         edge.setAttribute("ui.style", "text-offset: -30px, 0px;");
                         recursor.setAttribute("ui.style", "text-offset: 30px, 0px;");
                     }

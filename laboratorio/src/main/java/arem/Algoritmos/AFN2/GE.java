@@ -5,40 +5,53 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GE {
-    private Estados2 entrada; 
-    
-    private Estados2 salida;
-    
-    private Map<Estados2, Map<Character, Set<Estados2>>> transitions = new HashMap<>();
-    
-    private Set<Estados2> listaEstados;
+import arem.Algoritmos.enums.TipoGrafo;
+import arem.Algoritmos.interfaces.estados;
 
-    public void setListaEstados(Estados2 listaEstados) {
+public class GE<T extends estados> {
+    private T entrada; 
+    
+    private T salida;
+    
+    private Map<T, Map<Character, Set<T>>> transitions = new HashMap<>();
+    
+    private Set<T> listaEstados;
+
+    public void setListaEstados(T listaEstados) {
         if (!this.listaEstados.contains(listaEstados))
             this.listaEstados.add(listaEstados);
     }
 
-    public Set<Estados2> getListaEstados() {
+    public Set<T> getListaEstados() {
         return listaEstados;
     }
 
-    public Estados2 getEntrada() {
+    public T getEntrada() {
         return entrada;
     }
     
-    public Estados2 getSalida() {
+    public T getSalida() {
         return salida;
     }
     
-    public Map<Estados2, Map<Character, Set<Estados2>>> getTransitions() {
+    public Map<T, Map<Character, Set<T>>> getTransitions() {
         return transitions;
     }
     
-    public GE(Estados2 entrada, Estados2 salida, Map<Estados2, Map<Character, Set<Estados2>>> transitions, Set<Estados2> estados) {
+    public GE(T entrada, T salida, Map<T, Map<Character, Set<T>>> transitions, Set<T> estados) {
         this.entrada = entrada;
         this.salida = salida;
         this.transitions = new HashMap<>(transitions);
         this.listaEstados = new HashSet<>(estados);
+    }
+
+    public GE(Map<T, Map<Character, Set<T>>> transitions, Set<T> estados) {
+        this.transitions = new HashMap<>(transitions);
+        this.listaEstados = new HashSet<>(estados);
+    }
+
+    public void setEntradaSalida(){
+        entrada.setIdentificador(TipoGrafo.INICIAL);
+        salida.setIdentificador(TipoGrafo.FINAL);
     }
 }

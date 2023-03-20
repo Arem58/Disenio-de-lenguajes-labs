@@ -9,7 +9,7 @@ public class RevisionEx {
     private String expresion;
     
     private boolean sus = false;
-    private Boolean correcta = null;
+    private Boolean correcta;
     
     private static final Map<Integer, String> errorMes;
     
@@ -36,11 +36,13 @@ public class RevisionEx {
 
     public RevisionEx(String expresion) {
         this.expresion = expresion;
+        correcta = null;
         revision();
     }
 
     public void updateExpresion(String newExpersion){
         this.expresion = newExpersion;
+        correcta = null;
         revision();
     }
 

@@ -10,12 +10,12 @@ import arem.Funciones.Lenguaje;
 
 public class AFN2 {
     private String expresion;
-    private Stack<GE> stack;
-    private GE ge;
+    private Stack<GE<Estados2>> stack;
+    private GE<Estados2> ge;
     
     public static int stateCount;
     
-    public GE getGe() {
+    public GE<Estados2> getGe() {
         return ge;
     }
 
@@ -30,19 +30,19 @@ public class AFN2 {
         for(char c : expresion.toCharArray()) {
             switch (c) {
                 case '.':
-                    GE geSalida = stack.pop();
-                    GE geEntrada = stack.pop();
+                    GE<Estados2> geSalida = stack.pop();
+                    GE<Estados2> geEntrada = stack.pop();
                     concat(geEntrada, geSalida);
                     break;
 
                 case '|':
-                    GE geAbajo = stack.pop();
-                    GE geArriba = stack.pop();
+                    GE<Estados2> geAbajo = stack.pop();
+                    GE<Estados2> geArriba = stack.pop();
                     or(geArriba, geAbajo);
                     break;
                 
                 case '*':
-                    GE ge1 = stack.pop();
+                    GE<Estados2> ge1 = stack.pop();
                     kleene(ge1);
                     break;
 
@@ -57,7 +57,7 @@ public class AFN2 {
                     Estados2 salida = new Estados2();
                     Transiciones2 transicion = new Transiciones2(c, entrada, salida);
                     Set<Estados2> estados = new HashSet<>(Set.of(entrada, salida));
-                    GE ge = new GE(entrada, salida, transicion.getTransicion(), estados);
+                    GE<Estados2> ge = new GE<>(entrada, salida, transicion.getTransicion(), estados);
                     stack.push(ge);
                     break;
             }
@@ -65,7 +65,7 @@ public class AFN2 {
         ge = stack.pop();
     }
 
-    void kleene(GE ge1){
+    void kleene(GE<Estados2> ge1){
         //Se obtienen los estados de entrada y salida del mini grafo 
         Estados2 entrada = ge1.getEntrada();
         Estados2 salida = ge1.getSalida();
@@ -95,13 +95,13 @@ public class AFN2 {
         eTransitions.putAll(transicion.getTransicion());
 
         //Ahora se crea la nueva operacion la kleene
-        GE eGe = new GE(nueEntrada, nueSalida, eTransitions, estados);
+        GE<Estados2> eGe = new GE<>(nueEntrada, nueSalida, eTransitions, estados);
         eGe.setListaEstados(nueEntrada);
         eGe.setListaEstados(nueSalida);
         stack.push(eGe);
     }
 
-    void or(GE geArriba, GE geAbajo){
+    void or(GE<Estados2> geArriba, GE<Estados2> geAbajo){
         //Se obtienen los estados de entrada y salida del mini grafo 
         Estados2 entrada1 = geArriba.getEntrada();
         Estados2 entrada2 = geAbajo.getEntrada();
@@ -137,18 +137,18 @@ public class AFN2 {
         orTransitions.putAll(transicion.getTransicion());
 
         //Ahora se crea la nueva operacion la or
-        GE orGe = new GE(nueEntrada, nueSalida, orTransitions, estados);
+        GE<Estados2> orGe = new GE<>(nueEntrada, nueSalida, orTransitions, estados);
         orGe.setListaEstados(nueEntrada);
         orGe.setListaEstados(nueSalida);
         stack.push(orGe);
     }
 
-    void concat(GE geEntrada, GE geSalida){
+    void concat(GE<Estados2> geEntrada, GE<Estados2> geSalida){
         //Se obtienen los estados de entrada y salida del mini grafo 
-        Estados2 entrada1 = geEntrada.getEntrada();
-        Estados2 salida1 = geEntrada.getSalida();
-        Estados2 entrada2 = geSalida.getEntrada();
-        Estados2 salida2 = geSalida.getSalida();
+        Estados2 entrada1 =  geEntrada.getEntrada();
+        Estados2 salida1 =  geEntrada.getSalida();
+        Estados2 entrada2 =  geSalida.getEntrada();
+        Estados2 salida2 =  geSalida.getSalida();
 
         Map<Estados2, Map<Character, Set<Estados2>>> conTransitions = new HashMap<>();
         Set<Estados2> estados = new HashSet<>();
@@ -167,7 +167,7 @@ public class AFN2 {
         estados.remove(entrada2);
 
         //Ahora se crea la nueva operacion la concat
-        GE concatGe = new GE(entrada1, salida2, conTransitions, estados);
+        GE<Estados2> concatGe = new GE<>(entrada1, salida2, conTransitions, estados);
         stack.push(concatGe);
     }
 }

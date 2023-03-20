@@ -12,13 +12,13 @@ import arem.Algoritmos.AFN2.GE;
 
 public class Tabla {
     private Map<Estados2, Map<Character, Set<Estados2>>> tabla;
-    private GE ge;
+    private GE<Estados2> ge;
 
     public Map<Estados2, Map<Character, Set<Estados2>>> getTabla() {
         return tabla;
     }
 
-    public Tabla(GE ge) {
+    public Tabla(GE<Estados2> ge) {
         this.ge = ge;
         tabla = new HashMap<>();
         Set<Estados2> visitados = new HashSet<>();

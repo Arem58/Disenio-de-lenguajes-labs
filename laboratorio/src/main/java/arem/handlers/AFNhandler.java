@@ -16,8 +16,13 @@ public class AFNhandler extends handler {
 
     private void AFN() {
         AFN2 afn2 = new AFN2(expresion);
-        GE ge = afn2.getGe();
-        grafo grafo = new grafo(ge);
+        GE<Estados2> ge = afn2.getGe();
+        ge.setEntradaSalida();
+        grafo<Estados2> grafo = new grafo(ge);
+        imprimir(ge);
+    }
+
+    private void imprimir(GE<Estados2> ge) {
         // OrdenarAFN ordenarAFN = new OrdenarAFN(ge);
         System.out.println(ge.getListaEstados().toString());
         System.out.println("Estado inicial:" + ge.getEntrada().toString());
@@ -27,7 +32,7 @@ public class AFNhandler extends handler {
         // // Recorrer el mapa completo de transiciones
         for (Map.Entry<Estados2, Map<Character, Set<Estados2>>> entry : transicion.entrySet()) {
             Estados2 estado = entry.getKey();
-            int sourceState = estado.getId(); // Estado de origen
+            int sourceState = Integer.parseInt(estado.getId()); // Estado de origen
             Map<Character, Set<Estados2>> transitionMap = entry.getValue(); // Mapa interno de transiciones
 
             // Recorrer el mapa interno de transiciones
