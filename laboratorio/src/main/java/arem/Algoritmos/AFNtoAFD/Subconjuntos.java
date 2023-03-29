@@ -1,11 +1,13 @@
 package arem.Algoritmos.AFNtoAFD;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import arem.Algoritmos.AFN2.Estados2;
 import arem.Algoritmos.enums.TipoGrafo;
@@ -15,14 +17,13 @@ public class Subconjuntos {
     private Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS;
     private Map<EstadosAFN, Set<Estados2>> subConjuntos;
     private Set<EstadosAFN> listaEstados;
-    
-    
+
     private Map<Estados2, Map<Character, Set<Estados2>>> tablaT;
     private Estados2 inicial;
     private Estados2 finalN;
-    
+
     public static char id;
-    
+
     public Set<EstadosAFN> getListaEstados() {
         return listaEstados;
     }
@@ -30,8 +31,8 @@ public class Subconjuntos {
     public Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> getTablaS() {
         return tablaS;
     }
-    
-    public Subconjuntos(Estados2 inicial, Estados2 finalN,Map<Estados2, Map<Character, Set<Estados2>>> tablaT) {
+
+    public Subconjuntos(Estados2 inicial, Estados2 finalN, Map<Estados2, Map<Character, Set<Estados2>>> tablaT) {
         tablaS = new HashMap<>();
         subConjuntos = new HashMap<>();
         listaEstados = new HashSet<>();
@@ -43,29 +44,23 @@ public class Subconjuntos {
     }
 
     private void setTabla() {
-        Map<Character, Set<Estados2>> TransicionesNodo = tablaT.get(inicial);
-        
         Deque<Set<Estados2>> pila = new LinkedList<>();
         Deque<EstadosAFN> pilaEstados = new LinkedList<>();
-        boolean nuevosConjuntos = true;
-        EstadosAFN nodoTemp = new EstadosAFN();
-        subConjuntos.put(nodoTemp, TransicionesNodo.get('ε'));
-        pilaEstados.offer(nodoTemp);
-        pila.offer(TransicionesNodo.get('ε'));
+        Set<Estados2> conjuntoInicial = cerraduraEpsilon(Collections.singleton(inicial));
 
-        Map<Character, Boolean> conjuntoEncontrado = new HashMap<>();
-        for (Character caracter : Lenguaje.lenguajeInicial) {
-            conjuntoEncontrado.put(caracter, false);
-        }
+        EstadosAFN nuevoEstadoAFN = new EstadosAFN();
+        subConjuntos.put(nuevoEstadoAFN, conjuntoInicial);
+        pila.offer(conjuntoInicial);
+        pilaEstados.offer(nuevoEstadoAFN);
 
-        while (nuevosConjuntos || !pila.isEmpty() || !pilaEstados.isEmpty()) {
+        while (!pila.isEmpty() || !pilaEstados.isEmpty()) {
             Set<Estados2> Conjunto = pila.poll();
-            EstadosAFN nodoInicial = pilaEstados.poll();
+            EstadosAFN actual = pilaEstados.poll();
             for (Character caracter : Lenguaje.lenguajeInicial) {
-                Map<EstadosAFN, Set<Estados2>> conjuntos = new HashMap<>();
+                if (caracter == 'ε') {
+                    continue;
+                }
                 Set<Estados2> NuevoConjunto = new HashSet<>();
-
-                nuevosConjuntos = true;
                 for (Estados2 target : Conjunto) {
                     Map<Character, Set<Estados2>> conjunto = tablaT.get(target);
                     if (conjunto.containsKey(caracter)) {
@@ -74,56 +69,91 @@ public class Subconjuntos {
                         NuevoConjunto.addAll(tablaT.get(nodoActual).get('ε'));
                     }
                 }
-                EstadosAFN newEstado = null;
-                if (!subConjuntos.isEmpty()) {
-                    for (Map.Entry<EstadosAFN, Set<Estados2>> entry : subConjuntos.entrySet()) {
-                        Set<Estados2> viejosConjuntos = entry.getValue();
-                        if (NuevoConjunto.equals(viejosConjuntos)) {
-                            nuevosConjuntos = false;
-                            newEstado = entry.getKey();
-                            break;
-                        }
-                    }
-                }
-                if (nuevosConjuntos) {
-                    newEstado = new EstadosAFN();
+                EstadosAFN nuevoEstado = buscarSubconjunto(NuevoConjunto);
+                if (nuevoEstado == null && !todosSonEstadosInvalidos(NuevoConjunto)) {
+                    nuevoEstado = new EstadosAFN();
+                    subConjuntos.put(nuevoEstado, NuevoConjunto);
+                    pilaEstados.offer(nuevoEstado);
                     pila.offer(NuevoConjunto);
-                    pilaEstados.offer(newEstado);
-                    subConjuntos.put(newEstado, NuevoConjunto);
-                    nuevosConjuntos = true;
                 }
-                conjuntos.put(newEstado, NuevoConjunto);
-                TransicionesAFD transicionesAFD = new TransicionesAFD(caracter, conjuntos);
-                tablaS.computeIfAbsent(nodoInicial, k -> new HashMap<>()).putAll(transicionesAFD.getTransicion());
-                conjuntoEncontrado.put(caracter, nuevosConjuntos);
-            }
-            nuevosConjuntos = false;
-            for (Boolean encontrado : conjuntoEncontrado.values()) {
-                if (encontrado) {
-                    nuevosConjuntos = true;
-                    break;
+                if (nuevoEstado != null) {
+                    tablaS.computeIfAbsent(actual, k -> new HashMap<>()).merge(caracter,
+                            Collections.singleton(nuevoEstado),
+                            (s1, s2) -> {
+                                s1.addAll(s2);
+                                return s1;
+                            });
                 }
+
             }
-            // Conjunto = pila.poll();
-            // nodoInicial = pilaEstados.poll();
         }
         setFinals();
         setLIsta();
     }
 
-    public void setLIsta(){
-        listaEstados.addAll(tablaS.keySet());
+    public void setLIsta() {
+        listaEstados.addAll(subConjuntos.keySet());
+        listaEstados.addAll(tablaS.keySet().stream()
+                .filter(e -> !esInaccesible(e) && !todosSonEstadosInvalidos(subConjuntos.get(e))
+                        && !subConjuntos.get(e).isEmpty())
+                .collect(Collectors.toList()));
+
     }
 
-    public void setFinals(){
-        for(Map.Entry<EstadosAFN, Set<Estados2>> entry: subConjuntos.entrySet()){
+    private boolean todosSonEstadosInvalidos(Set<Estados2> estados) {
+        for (Estados2 estado : estados) {
+            if (estado.getIdentificador() != TipoGrafo.INVALID) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setFinals() {
+        for (Map.Entry<EstadosAFN, Set<Estados2>> entry : subConjuntos.entrySet()) {
             EstadosAFN estadosAFN = entry.getKey();
             Set<Estados2> targes = entry.getValue();
-            for (Estados2 target: targes){
-                if(target.equals(finalN)){
+            for (Estados2 target : targes) {
+                if (target.equals(finalN)) {
                     estadosAFN.setIdentificador(TipoGrafo.FINAL);
                 }
             }
         }
     }
+
+    private EstadosAFN buscarSubconjunto(Set<Estados2> nuevoConjunto) {
+        return subConjuntos.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(nuevoConjunto))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean esInaccesible(EstadosAFN estado) {
+        for (Map<Character, Set<EstadosAFN>> transiciones : tablaS.values()) {
+            for (Set<EstadosAFN> destinos : transiciones.values()) {
+                if (destinos.contains(estado)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private Set<Estados2> cerraduraEpsilon(Set<Estados2> estados) {
+        Set<Estados2> cerradura = new HashSet<>(estados);
+        Deque<Estados2> pila = new LinkedList<>(estados);
+    
+        while (!pila.isEmpty()) {
+            Estados2 estado = pila.poll();
+            Set<Estados2> transicionesEpsilon = tablaT.get(estado).getOrDefault('ε', Collections.emptySet());
+            for (Estados2 transicionEpsilon : transicionesEpsilon) {
+                if (cerradura.add(transicionEpsilon)) {
+                    pila.push(transicionEpsilon);
+                }
+            }
+        }
+    
+        return cerradura;
+    }    
 }

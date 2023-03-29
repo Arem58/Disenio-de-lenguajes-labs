@@ -12,19 +12,21 @@ import arem.Algoritmos.AFNtoAFD.Tabla;
 import arem.Grafo.grafo;
 
 public class AFNtoAFDhandler extends handler {
+    protected GE<EstadosAFN> geAFD;
 
     public AFNtoAFDhandler() {
         super();
         AFNtoAFD();
     }
 
-    private void AFNtoAFD() {
+    protected void AFNtoAFD() {
         AFN2 afn2 = new AFN2(expresion);
         GE<Estados2> ge = afn2.getGe();
         Tabla tabla = new Tabla(ge); 
         printTabla(tabla.getTabla());
         Subconjuntos subconjuntos = new Subconjuntos(ge.getEntrada(), ge.getSalida(), tabla.getTabla());
-        GE<EstadosAFN> geAFD = new GE<>(subconjuntos.getTablaS(), subconjuntos.getListaEstados());
+        geAFD = new GE<>(subconjuntos.getTablaS(), subconjuntos.getListaEstados());
+        imprimir(geAFD);
         grafo<EstadosAFN> grafo = new grafo(geAFD);
     }
 
@@ -38,6 +40,31 @@ public class AFNtoAFDhandler extends handler {
                 System.out.print(transicion.getValue().toString() + " ");
             }
             System.out.println();
+        }
+    }
+
+    protected void imprimir(GE<EstadosAFN> ge) {
+        // OrdenarAFN ordenarAFN = new OrdenarAFN(ge);
+        System.out.println(ge.getListaEstados().toString());
+        Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> transicion = ge.getTransitions();
+
+        // // Recorrer el mapa completo de transiciones
+        for (Map.Entry<EstadosAFN, Map<Character, Set<EstadosAFN>>> entry : transicion.entrySet()) {
+            EstadosAFN estado = entry.getKey();
+            String sourceState = estado.getId(); // Estado de origen
+            Map<Character, Set<EstadosAFN>> transitionMap = entry.getValue(); // Mapa interno de transiciones
+
+            // Recorrer el mapa interno de transiciones
+            for (Map.Entry<Character, Set<EstadosAFN>> transitionEntry : transitionMap.entrySet()) {
+                char symbol = transitionEntry.getKey(); // Símbolo de entrada
+                Set<EstadosAFN> destinationStates = transitionEntry.getValue(); // Conjunto de estados de destino
+
+                // Recorrer el conjunto de estados de destino
+                for (EstadosAFN destState : destinationStates) {
+                    // Imprimir la información completa de la transición
+                    System.out.println("Transición: " + sourceState + " --" + symbol + "--> " + destState.getId());
+                }
+            }
         }
     }
 }

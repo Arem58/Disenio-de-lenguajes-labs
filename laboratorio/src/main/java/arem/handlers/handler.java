@@ -14,8 +14,13 @@ public class handler {
         this.expresion = getExpresion();
     }
 
-    private String getExpresion(){
+    protected String getInput() {
         System.out.println("Ingrese una expresion regular: ");
+        Scanner container = new Scanner(System.in);
+        return container.nextLine();
+    }
+
+    protected String getExpresion() {
 
         RevisionEx revision;
         Expansion expansion;
@@ -23,7 +28,7 @@ public class handler {
 
         Scanner container = new Scanner(System.in);
 
-        String expresion = container.nextLine();
+        String expresion = getInput();
 
         revision = new RevisionEx(expresion);
         expresion = revision.getExpresion();
@@ -31,14 +36,14 @@ public class handler {
         if (Lenguaje.operadores)
             expresion = Lenguaje.ConvertirCar(expresion);
 
-        while (!revision.isCorrecta()){
+        while (!revision.isCorrecta()) {
             System.out.println("Corrige la expreion o ingresa una nueva: ");
             expresion = container.nextLine();
             revision.updateExpresion(expresion);
         }
         container.close();
 
-        if (revision.isSus()){
+        if (revision.isSus()) {
             expansion = new Expansion(expresion);
             expresion = expansion.getExpresion();
             System.out.println("Expresion extendida: " + expresion);

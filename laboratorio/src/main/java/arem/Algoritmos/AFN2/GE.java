@@ -50,6 +50,11 @@ public class GE<T extends estados> {
         this.listaEstados = new HashSet<>(estados);
     }
 
+    public GE(Map<T, Map<Character, Set<T>>> transitions) {
+        this.transitions = new HashMap<>(transitions);
+        this.listaEstados = new HashSet<>(transitions.keySet());
+    }
+
     public void setEntradaSalida(){
         entrada.setIdentificador(TipoGrafo.INICIAL);
         salida.setIdentificador(TipoGrafo.FINAL);

@@ -9,7 +9,8 @@ import java.util.Random;
 
 public class Lenguaje {
     public static List <Character> lenguajeInicial = new ArrayList<Character>();
-    public static Map<Character, Character> nuevoSimb = new HashMap<>();;
+    public static Map<Character, Character> nuevoSimb = new HashMap<>();
+    public static String EndofLine; 
     
     private static List<Character> expresionLen = new ArrayList<>();
     
