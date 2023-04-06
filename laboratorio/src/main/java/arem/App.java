@@ -6,6 +6,7 @@ import arem.handlers.AFDhandler;
 import arem.handlers.AFNhandler;
 import arem.handlers.AFNtoAFDhandler;
 import arem.handlers.AFNtoAFDmini;
+import arem.handlers.GALhandler;
 
 /**
  * Hello world!
@@ -19,7 +20,8 @@ public final class App {
                         2. AFN --> AFD
                         3. AFN --> AFD mini
                         4. AFD
-                        5. Salir
+                        5. GLA
+                        6. Salir
                     ----------------------
                 """);
     }
@@ -51,6 +53,10 @@ public final class App {
 
             case 4:
                 new AFDhandler();
+                break;
+
+            case 5:
+                new GALhandler();
                 break;
 
             default:
