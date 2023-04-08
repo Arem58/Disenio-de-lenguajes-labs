@@ -1,6 +1,7 @@
 package arem.handlers;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import arem.Algoritmos.AFN2.AFN2;
@@ -20,7 +21,7 @@ public class AFNtoAFDhandler extends handler {
     }
 
     protected void AFNtoAFD() {
-        AFN2 afn2 = new AFN2(expresion);
+        AFN2 afn2 = new AFN2(getExpresion(Optional.empty(), Optional.empty()));
         GE<Estados2> ge = afn2.getGe();
         Tabla tabla = new Tabla(ge); 
         printTabla(tabla.getTabla());

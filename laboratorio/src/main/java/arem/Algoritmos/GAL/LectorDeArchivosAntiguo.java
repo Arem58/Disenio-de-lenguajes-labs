@@ -14,45 +14,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LectorDeArchivos {
-    private final String LET_PATTERN = "let\\s+(\\w+)\\s*=\\s*(.+)";
-    private final String RULE_PATTERN = "rule\\s+(tokens)\\s*=\\s*(.+)";
-    private Map<String, String> expandedActions;
+public class LectorDeArchivosAntiguo {
+    private static final String LET_PATTERN = "let\\s+(\\w+)\\s*=\\s*(.+)";
+    private static final String RULE_PATTERN = "rule\\s+(tokens)\\s*=\\s*(.+)";
 
-    private Map<String, String> definitions = new HashMap<>();
-    private List<String> header;
-    private List<String> trailer;
-    private List<String> rules;
-    private List<List<String>> actions;
-    String fileName;
+    public static void main(String[] args) {
+        String fileName = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
 
-    private boolean hasError;
-
-    public boolean isHasError() {
-        return hasError;
-    }
-
-    public Map<String, String> getExpandedActions() {
-        return expandedActions;
-    }
-
-    public LectorDeArchivos(String fileName) {
-        this.fileName = fileName;
-        expandedActions = new LinkedHashMap<>();
-        header = new ArrayList<>();
-        trailer = new ArrayList<>();
-        rules = new ArrayList<>();
-        actions = new ArrayList<>();
-        hasError = false;
-        readingFile();
-        if (!hasError)
-            makeExpression();
-        if (!hasError)
-            printExpression();
-    }
-
-    public void readingFile() {
-
+        Map<String, String> definitions = new HashMap<>();
+        List<String> header = new ArrayList<>();
+        List<String> trailer = new ArrayList<>();
+        List<String> rules = new ArrayList<>();
+        List<List<String>> actions = new ArrayList<>();
         Set<String> tokens = new HashSet<>();
 
         boolean headerSectionFound = false;
@@ -72,14 +45,12 @@ public class LectorDeArchivos {
 
                 // Verifica las comillas en la linea
                 if (checkLineForErrors(line, tokens, isDefinition)) {
-                    hasError = true;
                     return;
                 }
 
                 if (isDefinition) {
                     if (!validateOrder(headerSectionFound, definitionsSectionFound, rulesSectionFound,
                             trailerSectionFound, line)) {
-                        hasError = true;
                         return;
                     }
                     definitionsSectionFound = true;
@@ -87,7 +58,6 @@ public class LectorDeArchivos {
                 } else if (ruleMatcher.find()) {
                     if (!validateOrder(headerSectionFound, definitionsSectionFound, rulesSectionFound,
                             trailerSectionFound, line)) {
-                        hasError = true;
                         return;
                     }
                     rulesSectionFound = true;
@@ -120,19 +90,16 @@ public class LectorDeArchivos {
 
         if (actions.isEmpty()) {
             System.err.println("Error en la sintaxis: No se ha reconocido ninguna regla de tokens.");
-            hasError = true;
             return;
         }
 
         for (String token : tokens) {
             if (!definitions.containsKey(token)) {
                 System.err.println("Error en la sintaxis: Se reconocio un token que no tiene definición: " + token);
-                hasError = true;
                 return;
             }
         }
 
-        System.out.println("\nDefinitions:");
         definitions.forEach((key, value) -> System.out.println(key + " = " + value));
 
         System.out.println("\nActions:");
@@ -141,9 +108,7 @@ public class LectorDeArchivos {
             System.out.println("---");
         });
 
-    }
-
-    private void makeExpression() {
+        Map<String, String> expandedActions = new LinkedHashMap<>();
         String actionTokens = "";
 
         for (List<String> actionList : actions) {
@@ -161,7 +126,6 @@ public class LectorDeArchivos {
                     if (!originalAction.matches("\\s*(?:'[^']*'|\"[^\"]*\")\\s*")) {
                         System.err.println("Error en la sintaxis: La acción '" + originalAction.trim()
                                 + "' no fue sustituida correctamente.");
-                        hasError = true;
                         return;
                     }
                 }
@@ -187,9 +151,7 @@ public class LectorDeArchivos {
                 expandedActions.put(actionTokens, expandedAction.trim());
             }
         }
-    }
 
-    private void printExpression() {
         // Construir la expresión regular final
         StringBuilder finalRegex = new StringBuilder();
         for (Map.Entry<String, String> actionEntry : expandedActions.entrySet()) {
@@ -199,7 +161,7 @@ public class LectorDeArchivos {
         System.out.println("Expresión regular generada: " + finalRegex.toString());
     }
 
-    public String expandExpression(String expression, Map<String, String> definitions) {
+    public static String expandExpression(String expression, Map<String, String> definitions) {
         boolean replaced = false;
         String expandedExpression = expression;
 
@@ -207,8 +169,7 @@ public class LectorDeArchivos {
             for (Map.Entry<String, String> definitionEntry : definitions.entrySet()) {
                 String key = definitionEntry.getKey();
                 String value = definitionEntry.getValue();
-                String newExpression = expandedExpression.replaceAll("\\b" + key + "\\b",
-                        Matcher.quoteReplacement(value));
+                String newExpression = expandedExpression.replaceAll("\\b" + key + "\\b", value);
 
                 if (!newExpression.equals(expandedExpression)) {
                     replaced = true;
@@ -225,7 +186,7 @@ public class LectorDeArchivos {
         }
     }
 
-    private boolean checkLineForErrors(String line, Set<String> nonQuotedExpressions, boolean isDefinition) {
+    private static boolean checkLineForErrors(String line, Set<String> nonQuotedExpressions, boolean isDefinition) {
         int singleQuotes = 0;
         int doubleQuotes = 0;
         int openParentheses = 0;
@@ -307,45 +268,38 @@ public class LectorDeArchivos {
 
         if (singleQuotes % 2 != 0) {
             System.err.println("Error: Hay un número impar de comillas simples en la línea: " + line);
-            hasError = true;
             failed = true;
         }
         if (doubleQuotes % 2 != 0) {
             System.err.println("Error: Hay un número impar de comillas dobles en la línea: " + line);
-            hasError = true;
             failed = true;
         }
         if (openParentheses != closeParentheses) {
             System.err.println("Error: El número de paréntesis abiertos y cerrados no coincide en la línea: " + line);
-            hasError = true;
             failed = true;
         }
         if (comment) {
             System.err.println("Error: Hay un comentario sin cerrar en la línea: " + line);
-            hasError = true;
             failed = true;
         }
         return failed;
     }
 
-    private boolean validateOrder(boolean headerSectionFound, boolean definitionsSectionFound,
+    private static boolean validateOrder(boolean headerSectionFound, boolean definitionsSectionFound,
             boolean rulesSectionFound, boolean trailerSectionFound, String line) {
         if (headerSectionFound && (definitionsSectionFound || rulesSectionFound || trailerSectionFound)) {
             System.err.println(
                     "Error: La sección de header debe estar antes de las definiciones regulares en la línea: " + line);
-            hasError = true;
             return false;
         }
         if (!definitionsSectionFound && (rulesSectionFound || trailerSectionFound)) {
             System.err.println(
                     "Error: La sección de definiciones debe estar antes de la sección de reglas en la línea: " + line);
-            hasError = true;
             return false;
         }
         if (!rulesSectionFound && trailerSectionFound) {
             System.err.println(
                     "Error: La sección de reglas debe estar antes de la sección de trailer en la línea: " + line);
-            hasError = true;
             return false;
         }
         return true;

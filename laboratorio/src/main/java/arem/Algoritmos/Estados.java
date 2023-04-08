@@ -15,11 +15,11 @@ public class Estados {
         this.pasatoEs = new LinkedList<Estados>();
     }
 
-    public static int createState(){
-        int estado = AFN.stateCount;
-        AFN.stateCount ++;
-        return estado;
-    }
+    // public static int createState(){
+    //     int estado = AFN.stateCount;
+    //     AFN.stateCount ++;
+    //     return estado;
+    // }
 
     @Override
     public String toString(){
