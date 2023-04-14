@@ -1,5 +1,6 @@
 package arem.handlers;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import arem.Algoritmos.AFN2.AFN2;
 import arem.Algoritmos.AFN2.Estados2;
 import arem.Algoritmos.AFN2.GE;
+import arem.Grafo.GrafoGraphviz;
 import arem.Grafo.grafo;
 
 public class AFNhandler extends handler {
@@ -19,11 +21,19 @@ public class AFNhandler extends handler {
         AFN2 afn2 = new AFN2(getExpresion(Optional.empty(), Optional.empty()));
         // // boolean isAccepted = afn2.simulate(".;-/.");
         // System.out.println(
-        //         "La cadena 'ababb' es " + (isAccepted ? "aceptada" : "rechazada") + " por el autómata minimizado.");
+        // "La cadena 'ababb' es " + (isAccepted ? "aceptada" : "rechazada") + " por el
+        // autómata minimizado.");
         GE<Estados2> ge = afn2.getGe();
         ge.setEntradaSalida();
         grafo<Estados2> grafo = new grafo(ge);
         imprimir(ge);
+        GrafoGraphviz<Estados2> grafoGraphviz = new GrafoGraphviz<>(ge);
+        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
+        try {
+            grafoGraphviz.createGraphViz(outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void imprimir(GE<Estados2> ge) {

@@ -11,7 +11,10 @@ import java.util.regex.Pattern;
 
 public class Lenguaje2 {
     public static List<String> lenguajeInicial = new ArrayList<String>();
-    public static Map<String, String> nuevoSimb = new HashMap<>();
+    public static Map<String, String> nuevoSimb = new HashMap<>(); // Para tokens a reemplazar fuera de las comillas
+    public static Map<String, String> simbolosDentroComillas = new HashMap<>(); // Para tokens a reemplazar dentro de
+                                                                                // las comillas
+    public static Map<String, String> viejoSimb = new HashMap<>(); // Para revertir los tokens reemplazados
     public static String EndofLine;
 
     private static List<Character> expresionLen = new ArrayList<>();
@@ -51,7 +54,8 @@ public class Lenguaje2 {
         return modifiedExpresion.toString();
     }
 
-    private static void replaceOperatorWithRandomCharacter(String s) {
+    private static void replaceOperatorWithRandomCharacter(String s, Map<String, String> nuevoSimb,
+            Map<String, String> viejoSimb) {
         Random rand = new Random();
         int numAleatorio = rand.nextInt(4351, 5792);
         char[] chars = Character.toChars(numAleatorio);
@@ -60,43 +64,52 @@ public class Lenguaje2 {
             chars = Character.toChars(numAleatorio);
         }
         Lenguaje2.operadores = true;
-        Lenguaje2.nuevoSimb.put(s, String.valueOf(chars[0]));
-        Lenguaje2.nuevoSimb.put(String.valueOf(chars[0]), s);
+        nuevoSimb.put(s, String.valueOf(chars[0]));
+        viejoSimb.put(String.valueOf(chars[0]), s);
     }
 
     public static void setLenguajeInicial(String expresion, String token) {
         Lenguaje2.operadores = false;
         Lenguaje2.setExpresionLen(expresion);
-        Pattern operatorPattern = Pattern.compile("\\'(.*?)\\'");
+        Pattern quotePattern = Pattern.compile("(\\'(.*?)\\')|(\\\"(.*?)\\\")");
+        boolean insideQuotes = false;
 
         int startIndex = 0;
-        Matcher operatorMatcher = operatorPattern.matcher(expresion);
-        while (operatorMatcher.find(startIndex)) {
-            String operator = operatorMatcher.group(1);
+        Matcher quoteMatcher = quotePattern.matcher(expresion);
+        while (quoteMatcher.find(startIndex)) {
+            String operator = quoteMatcher.group(2) != null ? quoteMatcher.group(2) : quoteMatcher.group(4);
 
-            if (operator.equals("\\s") || operator.equals("\\t") || operator.equals("\\n")
-                    || operadoresIniciales.contains(operator.charAt(0))
-                    || parentesis.contains(operator.charAt(0))) {
-                replaceOperatorWithRandomCharacter(operator);
-                if (!lenguajeInicial.contains(operator)) {
-                    lenguajeInicial.add(operator);
+            for (int i = 0; i < operator.length(); i++) {
+                String currentChar = String.valueOf(operator.charAt(i));
+
+                if (currentChar.equals("\\")) {
+                    if (i + 1 < operator.length()) {
+                        i++;
+                        currentChar = currentChar + operator.charAt(i);
+                    }
+                }
+
+                if (currentChar.equals("\\s") || currentChar.equals("\\t") || currentChar.equals("\\n")
+                        || operadoresIniciales.contains(currentChar.charAt(0))
+                        || parentesis.contains(currentChar.charAt(0)) && (!lenguajeInicial.contains(currentChar))) {
+                    replaceOperatorWithRandomCharacter(currentChar, simbolosDentroComillas, viejoSimb);
+                    lenguajeInicial.add(currentChar);
                 }
             }
 
-            startIndex = operatorMatcher.end();
+            startIndex = quoteMatcher.end();
         }
 
-        replaceOperatorWithRandomCharacter(token);
         if (!lenguajeInicial.contains(token)) {
+            replaceOperatorWithRandomCharacter(token, nuevoSimb, viejoSimb);
             lenguajeInicial.add(token);
         }
 
-        boolean insideQuotes = false;
         for (int i = 0; i < expresion.length(); i++) {
             char c = expresion.charAt(i);
             String s = String.valueOf(c);
 
-            if (c == '\'') {
+            if (c == '\'' || c == '\"') {
                 insideQuotes = !insideQuotes;
                 continue;
             }
@@ -119,7 +132,7 @@ public class Lenguaje2 {
                 }
 
                 if (Postfix.precedence.containsKey(c)) {
-                    replaceOperatorWithRandomCharacter(s);
+                    replaceOperatorWithRandomCharacter(s, nuevoSimb, viejoSimb);
                 }
                 lenguajeInicial.add(s);
             }
@@ -142,55 +155,78 @@ public class Lenguaje2 {
     }
 
     public static String ConvertirCar(String expresion) {
-        return replaceTokens(expresion);
+        String replacedTokens = replaceTokens(expresion, simbolosDentroComillas);
+        return replaceAllTokens(replacedTokens, nuevoSimb);
     }
-    
-    private static String replaceTokens(String expresion) {
+
+    private static String replaceTokens(String expresion, Map<String, String> tokenMap) {
         StringBuilder newEx = new StringBuilder();
         int index = 0;
-        boolean insideQuotes = false;
-    
+        int quoteCount = 0;
+
         while (index < expresion.length()) {
             char currentChar = expresion.charAt(index);
-    
-            if (currentChar == '\'') {
-                insideQuotes = !insideQuotes;
+
+            if (currentChar == '\'' || currentChar == '\"') {
+                quoteCount++;
+            }
+
+            boolean insideQuotes = quoteCount % 2 != 0;
+            boolean tokenReplaced = false;
+
+            if (insideQuotes) {
+                for (Map.Entry<String, String> entry : tokenMap.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+
+                    if (expresion.startsWith(key, index)) {
+                        newEx.append(value);
+                        index += key.length();
+                        tokenReplaced = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!tokenReplaced) {
                 newEx.append(currentChar);
                 index++;
-                continue;
             }
-    
-            String currentToken = "";
+        }
+
+        return newEx.toString();
+    }
+
+    private static String replaceAllTokens(String expresion, Map<String, String> tokenMap) {
+        StringBuilder newEx = new StringBuilder();
+        int index = 0;
+
+        while (index < expresion.length()) {
+            char currentChar = expresion.charAt(index);
+
+            boolean tokenReplaced = false;
             for (Map.Entry<String, String> entry : Lenguaje2.nuevoSimb.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-    
+
                 if (expresion.startsWith(key, index)) {
-                    currentToken = key;
                     newEx.append(value);
                     index += key.length();
+                    tokenReplaced = true;
                     break;
                 }
             }
-    
-            if (currentToken.equals("")) {
+
+            if (!tokenReplaced) {
                 newEx.append(currentChar);
                 index++;
-            } else {
-                if (!lenguajeInicial.contains(currentToken)) {
-                    lenguajeInicial.add(currentToken);
-                }
             }
         }
-    
+
         return newEx.toString();
     }
 
     public static String RevertirCar(String expresion) {
-        String originalEx = expresion;
-        for (Map.Entry<String, String> entry : Lenguaje2.nuevoSimb.entrySet()) {
-            originalEx = originalEx.replace(entry.getValue(), entry.getKey());
-        }
-        return originalEx;
+        return replaceAllTokens(expresion, viejoSimb);
     }
 }

@@ -3,6 +3,7 @@ package arem.Funciones;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Stack;
 
 public class RevisionEx {
@@ -38,6 +39,11 @@ public class RevisionEx {
         this.expresion = expresion;
         correcta = null;
         revision();
+    }
+
+    public RevisionEx(String expresion, String optionalKey){
+        this.expresion = expresion;
+        correcta = true;
     }
 
     public void updateExpresion(String newExpersion){

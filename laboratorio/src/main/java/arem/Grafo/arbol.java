@@ -1,70 +1,56 @@
 package arem.Grafo;
 
+import guru.nidi.graphviz.attribute.Color;
+import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.MutableGraph;
+import guru.nidi.graphviz.model.MutableNode;
+import guru.nidi.graphviz.model.Node;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import arem.Algoritmos.AFD.nodo;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
+
+import static guru.nidi.graphviz.model.Factory.mutGraph;
+import static guru.nidi.graphviz.model.Factory.mutNode;
 
 public class arbol {
-    private Graph graph;
+    public static void visualizeTree(nodo root, String outputPath) throws IOException {
+        MutableGraph graph = mutGraph("tree").setDirected(true);
+        Map<Integer, MutableNode> nodeMap = new HashMap<>();
 
-    public arbol() {
-        graph = new SingleGraph("Árbol");
-        graph.setAttribute("ui.stylesheet", "node { size: 30px; text-size: 16px; fill-color: #FFF; stroke-color: black; stroke-width: 2px; text-color: black; } edge { size: 2px; }");
+        preOrderTraversal(root, nodeMap, graph);
+        Graphviz.fromGraph(graph).width(1200).render(Format.PNG).toFile(new File(outputPath));
+
+        System.out.println("Archivo '" + outputPath + "' creado.");
     }
 
-    public void graficar(nodo root) {
-        System.setProperty("org.graphstream.ui", "swing");
-        Node rootNode = addOrGetNode(root);
-        rootNode.setAttribute("xy", 0, 0);
-        addNode(root, 1, 0, 100, 5);
-        Viewer viewer = graph.display(true);
-        viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.EXIT);
-    }
-
-    private void addNode(nodo node, int depth, int x, int xSpacing, int maxDepth) {
-        if (depth >= maxDepth) {
+    private static void preOrderTraversal(nodo treeNode, Map<Integer, MutableNode> nodeMap, MutableGraph graph) {
+        if (treeNode == null) {
             return;
         }
     
-        int newXSpacing = xSpacing * 2 / (depth + 1);
+        // Utiliza el atributo Label para establecer el valor del nodo
+        int nodeId = treeNode.getId();
+        MutableNode currentNode = mutNode(Integer.toString(nodeId)).add(Label.of(treeNode.getValue()), Color.BLACK);
+        nodeMap.put(nodeId, currentNode);
+        graph.add(currentNode);
     
-        if (node.getLeft() != null) {
-            Node leftNode = addOrGetNode(node.getLeft());
-            leftNode.setAttribute("xy", x - newXSpacing, -depth * 50);
-            addOrGetEdge(node, node.getLeft());
-            addNode(node.getLeft(), depth + 1, x - newXSpacing, newXSpacing, maxDepth);
+        nodo leftChild = treeNode.getLeft();
+        nodo rightChild = treeNode.getRight();
+    
+        if (leftChild != null) {
+            preOrderTraversal(leftChild, nodeMap, graph);
+            graph.add(currentNode.addLink(mutNode(Integer.toString(leftChild.getId()))));
         }
     
-        if (node.getRight() != null) {
-            Node rightNode = addOrGetNode(node.getRight());
-            rightNode.setAttribute("xy", x + newXSpacing, -depth * 50);
-            addOrGetEdge(node, node.getRight());
-            addNode(node.getRight(), depth + 1, x + newXSpacing, newXSpacing, maxDepth);
+        if (rightChild != null) {
+            preOrderTraversal(rightChild, nodeMap, graph);
+            graph.add(currentNode.addLink(mutNode(Integer.toString(rightChild.getId()))));
         }
-    }
-
-    private Node addOrGetNode(nodo treeNode) {
-        String id = "node_" + treeNode.hashCode();
-        Node node = graph.getNode(id);
-        if (node == null) {
-            node = graph.addNode(id);
-        }
-        node.setAttribute("ui.label", Character.toString(treeNode.getValue()));
-        return node;
-    }
-
-    private void addOrGetEdge(nodo source, nodo target) {
-        String edgeId = "edge_" + source.hashCode() + "_" + target.hashCode();
-        if (graph.getEdge(edgeId) == null) {
-            Node sourceNode = graph.getNode("node_" + source.hashCode());
-            Node targetNode = graph.getNode("node_" + target.hashCode());
-            if (sourceNode != null && targetNode != null) {
-                graph.addEdge(edgeId, sourceNode, targetNode);
-            }
-        }
-    }
+    }    
 }
-
-

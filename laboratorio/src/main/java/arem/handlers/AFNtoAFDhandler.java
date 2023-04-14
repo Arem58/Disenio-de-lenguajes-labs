@@ -1,5 +1,6 @@
 package arem.handlers;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -10,6 +11,7 @@ import arem.Algoritmos.AFN2.GE;
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
 import arem.Algoritmos.AFNtoAFD.Subconjuntos;
 import arem.Algoritmos.AFNtoAFD.Tabla;
+import arem.Grafo.GrafoGraphviz;
 import arem.Grafo.grafo;
 
 public class AFNtoAFDhandler extends handler {
@@ -29,6 +31,13 @@ public class AFNtoAFDhandler extends handler {
         geAFD = new GE<>(subconjuntos.getTablaS(), subconjuntos.getListaEstados());
         imprimir(geAFD);
         grafo<EstadosAFN> grafo = new grafo(geAFD);
+        GrafoGraphviz<EstadosAFN> grafoGraphviz = new GrafoGraphviz<>(geAFD);
+        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
+        try {
+            grafoGraphviz.createGraphViz(outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printTabla(Map<Estados2, Map<Character, Set<Estados2>>> tabla) {

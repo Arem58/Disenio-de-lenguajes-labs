@@ -26,19 +26,14 @@ public class handler {
 
         String expresion = expresionInicial.orElseGet(this::getInput);
         String key = optionalKey.orElse("");
-
-        revision = new RevisionEx(expresion);
+        
+        revision = optionalKey.isPresent() ? new RevisionEx(expresion, key) : new RevisionEx(expresion);
         expresion = revision.getExpresion();
 
-        // while (!revision.isCorrecta()) {
-        //     System.out.println("Corrige la expreion o ingresa una nueva: ");
-        //     expresion = container.nextLine();
-        //     revision.updateExpresion(expresion);
-        // }
-
         if (key != "") {
-            expresion = "(" + expresion + key + ")";
+            expresion = expresion + key;
             expresion = Lenguaje2.replaceSpacesWithSlashS(expresion);
+            System.out.println("Expresion: " + expresion);
             Lenguaje2.setLenguajeInicial(expresion, key);
             if (Lenguaje2.operadores)
                 expresion = Lenguaje2.ConvertirCar(expresion);
@@ -46,25 +41,32 @@ public class handler {
             expresion = expander.expand();
             System.out.println("Expanded regex: " + expresion);
         } else {
+            while (!revision.isCorrecta()) {
+                System.out.println("Corrige la expreion o ingresa una nueva: ");
+                expresion = container.nextLine();
+                revision.updateExpresion(expresion);
+            }
             Lenguaje.setLenguajeInicial(expresion);
-            if (Lenguaje.operadores || Lenguaje2.operadores)
+            if (Lenguaje.operadores)
                 expresion = Lenguaje.ConvertirCar(expresion);
         }
 
-        if (revision.isSus()) {
+        if (revision.isSus() || key != "") {
             expansion = new Expansion(expresion);
             expresion = expansion.getExpresion();
             System.out.println("Expresion extendida: " + expresion);
         }
 
-        postfix = new Postfix();
-        expresion = postfix.infixToPostfix(expresion);
-        if (key != "") {
-            Lenguaje2.setLenguajeFinal(expresion);
-        } else {
-            Lenguaje.setLenguajeFinal(expresion);
+        if (key == ""){
+            postfix = new Postfix();
+            expresion = postfix.infixToPostfix(expresion);
+            if (key != "") {
+                Lenguaje2.setLenguajeFinal(expresion);
+            } else {
+                Lenguaje.setLenguajeFinal(expresion);
+            }
+            System.out.println("Postfix: " + expresion);
         }
-        System.out.println("Postfix: " + expresion);
 
         return expresion;
     }

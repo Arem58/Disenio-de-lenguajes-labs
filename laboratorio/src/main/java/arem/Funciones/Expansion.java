@@ -11,98 +11,116 @@ public class Expansion {
         this.expresion = exExpre(expresion);
     }
 
-    public String exExpre(String expresion){
-        String newE = "";
-        for (int i = 0; i < expresion.length(); i++){
+    public static String exExpre(String expresion) {
+        StringBuilder newE = new StringBuilder();
+        for (int i = 0; i < expresion.length(); i++) {
             char c = expresion.charAt(i);
-            
-            if ( c == '('){
-                String cache = "";
-                newE += c;
-                i += 1; 
+
+            if (c == '(') {
+                String cache = "" + c;
+                i += 1;
                 c = expresion.charAt(i);
-                while (c != ')'){
+                boolean continua = true;
+                while (c != ')') {
+                    if (c == '(') {
+                        newE.append(cache);
+                        continua = false;
+                        i -= 1;
+                        break;
+                    }
                     cache += c;
                     i += 1;
                     if (i >= expresion.length())
                         break;
                     c = expresion.charAt(i);
                 }
-                //Recursion
-                cache = exExpre(cache);
-                i += 1;
-                if (i >= expresion.length())
-                    return cache;
-                c = expresion.charAt(i);
-                newE += concatPra(c, cache);
+                if (!continua)
+                    continue;
+                // Recursion
+                // cache = exExpre(cache);
+                cache += c;
+                // if (i >= expresion.length())
+                // return cache;
+                c = (i + 1 < expresion.length()) ? expresion.charAt(i + 1) : '\0';
+                if (c == '+' || c == '?')
+                    i += 1;
+                newE.append(concatPra(c, cache));
                 continue;
-            }else if (c == ')'){
+            } else if (c == ')') {
                 String cache = "";
                 int parentesis = 0;
                 int j = newE.length() - 1;
+                int originalJ = j;
+                if (i + 1 < expresion.length()
+                        && (newE.charAt(j) != ')' && expresion.charAt(i + 1) == '+' || expresion.charAt(i + 1) == '?'))
+                    parentesis -= 1;
                 c = newE.charAt(j);
-                while (true){
+                if (i + 1 < expresion.length() && (expresion.charAt(i + 1) != '+' && expresion.charAt(i + 1) != '?')) {
+                    newE.append(c);
+                    continue;
+                }
+                while (true) {
                     if (c == ')')
                         parentesis -= 1;
-                    
+
                     if (c == '(')
                         parentesis += 1;
-                    
-                    if (parentesis == 0)
+
+                    if (parentesis == 0) {
+                        newE.append(')');
                         break;
-                        
+                    }
+
                     j -= 1;
                     c = newE.charAt(j);
                 }
-                for (int k = j; k<newE.length(); k ++){
+                if (j == originalJ)
+                    continue;
+                for (int k = j; k < newE.length() - 1; k++) {
                     cache += newE.charAt(k);
                 }
-                newE = newE.substring(0, j) + newE.charAt(j);
+                newE = new StringBuilder(newE.substring(0, j));
                 i += 1;
                 if (i >= expresion.length())
                     continue;
                 c = expresion.charAt(i);
-                
-                newE += concatPra(c, cache);
+                newE.append(concatPra(c, cache));
                 continue;
             }
 
-            if (i != expresion.length() - 1){
-                if (c != '?' && c != '+' && expresion.charAt(i+1) != '?' && expresion.charAt(i + 1) != '+'){
-                    newE += c;
+            if (i != expresion.length() - 1) {
+                if (c != '?' && c != '+' && expresion.charAt(i + 1) != '?' && expresion.charAt(i + 1) != '+') {
+                    newE.append(c);
                     continue;
                 }
-            }else {
-                if (c != '?' && c != '+'){
-                    newE += c;
+            } else {
+                if (c != '?' && c != '+') {
+                    newE.append(c);
                     continue;
                 }
             }
 
-            if (c == '?'){
-                c = expresion.charAt(i-1);
-                newE += "(" + String.valueOf(c) + "|ε)";
+            if (c == '?') {
+                c = expresion.charAt(i - 1);
+                newE.append("(").append(c).append("|ε)");
                 continue;
             }
 
-            if (c == '+'){
-                c = expresion.charAt(i-1);
-                newE += String.valueOf(c) + String.valueOf(c) + "*";
+            if (c == '+') {
+                c = expresion.charAt(i - 1);
+                newE.append(concatPra(c, String.valueOf(c)));
                 continue;
             }
         }
-        return newE;
+        return newE.toString();
     }
 
-    private String concatPra(Character c, String cache){
-        if (c == '?'){
-            cache = "(" + cache + ")" + "|ε)";
-        }else if (c == '+'){
-            cache = cache + ")" + "(" + cache + ")*";
-        }else {
-            cache += ")";
+    private static String concatPra(char operator, String cache) {
+        if (operator == '?') {
+            cache = "(" + cache + "|ε)";
+        } else if (operator == '+') {
+            cache = "(" + cache + cache + "*)";
         }
         return cache;
     }
 }
-

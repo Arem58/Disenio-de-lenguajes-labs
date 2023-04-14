@@ -4,12 +4,20 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class nodo {
-    private char value;
+    private static int idCounter = 0;
+    
+    private int id;
+    private String value;
     private nodo left;
     private nodo right;
     
-    public nodo(char value) {
+    public nodo(String value) {
+        this.id = idCounter++;
         this.value = value;
+    }
+    
+    public int getId() {
+        return id;
     }
     
     public void setLeft(nodo left) {
@@ -20,7 +28,7 @@ public class nodo {
         this.right = right;
     }
     
-    public char getValue() {
+    public String getValue() {
         return value;
     }
     

@@ -1,13 +1,16 @@
 package arem.Algoritmos.AFD;
 
+import java.io.IOException;
 import java.util.Stack;
 
+import arem.Funciones.Lenguaje;
+import arem.Funciones.Lenguaje2;
 import arem.Grafo.arbol;
 
 public class Arbol {
     private String expresion;
     private Stack<nodo> stack;
-    private nodo root; 
+    private nodo root;
 
     public nodo getRoot() {
         return root;
@@ -21,9 +24,12 @@ public class Arbol {
 
     private void makeTree() {
         for (char c : expresion.toCharArray()) {
+            String simbolo = Character.toString(c);
             switch (c) {
                 case '.':
-                    nodo nodoConcat = new nodo(c);
+                    if (Lenguaje2.viejoSimb.containsKey(simbolo))
+                        simbolo = Lenguaje2.viejoSimb.get(simbolo);
+                    nodo nodoConcat = new nodo(simbolo);
                     nodo nodoFinal = stack.pop();
                     nodo nodoInicial = stack.pop();
 
@@ -35,7 +41,9 @@ public class Arbol {
                     break;
 
                 case '|':
-                    nodo nodoOr = new nodo(c);
+                    if (Lenguaje2.viejoSimb.containsKey(simbolo))
+                        simbolo = Lenguaje2.viejoSimb.get(simbolo);
+                    nodo nodoOr = new nodo(simbolo);
                     nodo nodoDerecha = stack.pop();
                     nodo nodoIzquierda = stack.pop();
 
@@ -47,7 +55,9 @@ public class Arbol {
                     break;
 
                 case '*':
-                    nodo nodoKleene = new nodo(c);
+                    if (Lenguaje2.viejoSimb.containsKey(simbolo))
+                        simbolo = Lenguaje2.viejoSimb.get(simbolo);
+                    nodo nodoKleene = new nodo(simbolo);
                     nodo nodoExtraido = stack.pop();
 
                     nodoKleene.setLeft(nodoExtraido);
@@ -56,7 +66,9 @@ public class Arbol {
                     break;
 
                 default:
-                    nodo nodo = new nodo(c);
+                    if (Lenguaje2.viejoSimb.containsKey(simbolo))
+                        simbolo = Lenguaje2.viejoSimb.get(simbolo);
+                    nodo nodo = new nodo(simbolo);
                     stack.push(nodo);
                     break;
             }
@@ -64,13 +76,12 @@ public class Arbol {
         root = stack.pop();
     }
 
-    // public static void main(String[] args) {
+    // public static void main(String[] args) throws IOException {
     //     String postfix = "ab|*a.b.b.";
-    //     Arbol arbol = new Arbol(postfix);
-    //     nodo root = arbol.makeTree();
+    //     Arbol arbolC = new Arbol(postfix);
+    //     nodo root = arbolC.getRoot();
     //     nodo.bfs(root);
 
-    //     arem.Grafo.arbol visualizacionArbol = new arem.Grafo.arbol();
-    //     visualizacionArbol.graficar(root);
+    //     arbol.visualizeTree(root, "example.png");
     // }
 }

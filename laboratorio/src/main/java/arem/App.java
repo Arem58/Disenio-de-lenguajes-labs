@@ -1,5 +1,6 @@
 package arem;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import arem.handlers.AFDhandler;
@@ -34,7 +35,7 @@ public final class App {
      * 
      * @param args The arguments of the program.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         menuPrincipal();
         Scanner scanner = new Scanner(System.in);
         int opcion = scanner.nextInt();
