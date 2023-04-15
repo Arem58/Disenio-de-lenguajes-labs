@@ -23,6 +23,7 @@ public class GALhandler extends handler {
         }
         Map<String, String> expandedActions = archivo.getExpandedActions();
         StringBuilder finalExpression = new StringBuilder();
+        finalExpression.append("(");
         Iterator<Map.Entry<String, String>> iterator = expandedActions.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, String> actionEntry = iterator.next();
@@ -38,14 +39,15 @@ public class GALhandler extends handler {
             if (iterator.hasNext()) {
                 finalExpression.append("|");
             } else {
-                finalExpression.append("#");
+                finalExpression.append(")#");
             }
         }
         System.out.println("Expresion final: " + finalExpression.toString());
         finalExpression = new StringBuilder(postfix(finalExpression.toString()));
+        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
         Arbol arbolg = new Arbol(finalExpression.toString());
         nodo root = arbolg.getRoot();
-        arbol.visualizeTree(root, "example.png");
+        arbol.visualizeTree(root, outputPath);
         // nodo.bfs(root);
         // arem.Grafo.arbol visualizacionArbol = new arem.Grafo.arbol();
         // visualizacionArbol.graficar(root);

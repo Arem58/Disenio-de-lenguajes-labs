@@ -31,7 +31,7 @@ public class handler {
         expresion = revision.getExpresion();
 
         if (key != "") {
-            expresion = expresion + key;
+            expresion = "(" + expresion + key + ")";
             expresion = Lenguaje2.replaceSpacesWithSlashS(expresion);
             System.out.println("Expresion: " + expresion);
             Lenguaje2.setLenguajeInicial(expresion, key);
