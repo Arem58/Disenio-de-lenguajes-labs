@@ -2,6 +2,7 @@ package arem.Grafo;
 
 import guru.nidi.graphviz.attribute.Color;
 import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.attribute.Style;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -37,7 +38,7 @@ public class GrafoGraphviz<T extends estados> {
 
             switch (estado.getIdentificador()) {
                 case FINAL:
-                    node.add(Color.RED);
+                    node.add(Color.RED, Shape.DOUBLE_CIRCLE);
                     break;
                 case INICIAL:
                     node.add(Color.BLUE);

@@ -1,9 +1,11 @@
 package arem.handlers;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import arem.Algoritmos.AFD.Arbol;
 import arem.Algoritmos.AFD.nodo;
@@ -16,7 +18,7 @@ import arem.Grafo.arbol;
 public class GALhandler extends handler {
 
     public GALhandler() throws IOException {
-        String fileNane = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/Archivos Yal/slr-2.yal";
+        String fileNane = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;
@@ -47,10 +49,9 @@ public class GALhandler extends handler {
         String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
         Arbol arbolg = new Arbol(finalExpression.toString());
         nodo root = arbolg.getRoot();
-        arbol.visualizeTree(root, outputPath);
+        Set<String> acceptingStates = new HashSet<>(expandedActions.keySet());
+        arbol.visualizeTree(root, outputPath, acceptingStates);
         // nodo.bfs(root);
-        // arem.Grafo.arbol visualizacionArbol = new arem.Grafo.arbol();
-        // visualizacionArbol.graficar(root);
     }
 
     private String postfix(String finalExpression) {
