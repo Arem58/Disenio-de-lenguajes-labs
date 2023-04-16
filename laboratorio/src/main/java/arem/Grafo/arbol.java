@@ -6,7 +6,6 @@ import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
-import guru.nidi.graphviz.model.Node;
 import guru.nidi.graphviz.attribute.Shape;
 
 import java.io.File;

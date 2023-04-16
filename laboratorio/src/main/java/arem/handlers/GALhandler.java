@@ -18,7 +18,7 @@ import arem.Grafo.arbol;
 public class GALhandler extends handler {
 
     public GALhandler() throws IOException {
-        String fileNane = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/Test.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;
