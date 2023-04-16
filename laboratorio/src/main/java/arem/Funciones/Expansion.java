@@ -47,18 +47,18 @@ public class Expansion {
                 newE.append(concatPra(c, cache));
                 continue;
             } else if (c == ')') {
-                String cache = "";
-                int parentesis = 0;
-                int j = newE.length() - 1;
-                int originalJ = j;
-                if (i + 1 < expresion.length()
-                        && (newE.charAt(j) != ')' && expresion.charAt(i + 1) == '+' || expresion.charAt(i + 1) == '?'))
-                    parentesis -= 1;
-                c = newE.charAt(j);
-                if (i + 1 < expresion.length() && (expresion.charAt(i + 1) != '+' && expresion.charAt(i + 1) != '?')) {
+                if ((i + 1 < expresion.length() && (expresion.charAt(i + 1) != '+' && expresion.charAt(i + 1) != '?')) || i == expresion.length() - 1) {
                     newE.append(c);
                     continue;
                 }
+                String cache = "";
+                newE.append(")");
+                int parentesis = 0;
+                int j = newE.length() - 1;
+                int originalJ = j;
+                // if (i + 1 < expresion.length()
+                //         && (newE.charAt(j) != ')' && expresion.charAt(i + 1) == '+' || expresion.charAt(i + 1) == '?'))
+                //     parentesis -= 1;
                 while (true) {
                     if (c == ')')
                         parentesis -= 1;
@@ -67,16 +67,17 @@ public class Expansion {
                         parentesis += 1;
 
                     if (parentesis == 0) {
-                        newE.append(')');
                         break;
                     }
 
                     j -= 1;
                     c = newE.charAt(j);
                 }
-                if (j == originalJ)
+                if (j == originalJ) {
+                    newE.append(')');
                     continue;
-                for (int k = j; k < newE.length() - 1; k++) {
+                }
+                for (int k = j; k < newE.length(); k++) {
                     cache += newE.charAt(k);
                 }
                 newE = new StringBuilder(newE.substring(0, j));
