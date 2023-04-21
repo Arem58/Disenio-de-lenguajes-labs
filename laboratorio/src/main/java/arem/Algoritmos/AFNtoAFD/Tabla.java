@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import arem.Algoritmos.AFN2.Estados2;
-import arem.Algoritmos.AFN2.GE;
+import arem.Algoritmos.GE.GE;
 
 public class Tabla {
     private Map<Estados2, Map<Character, Set<Estados2>>> tabla;
@@ -28,7 +28,7 @@ public class Tabla {
     private void getTablaT(Map<Estados2, Map<Character, Set<Estados2>>> transiciones, Estados2 nodo,
             Set<Estados2> visitados) {
         if (visitados.contains(nodo)) {
-            return; // Evitar ciclos
+            return; 
         }
         visitados.add(nodo);
         Map<Character, Set<Estados2>> TransicionesNodo = transiciones.get(nodo);
@@ -58,7 +58,7 @@ public class Tabla {
     private void addEpsilon(Map<Estados2, Map<Character, Set<Estados2>>> transiciones, Estados2 nodo,
             Set<Estados2> visitados, Set<Estados2> epsilonTargets) {
         if (visitados.contains(nodo)) {
-            return; // Evitar ciclos
+            return; 
         }
         visitados.add(nodo);
         Map<Character, Set<Estados2>> TransicionesNodo = transiciones.get(nodo);

@@ -7,10 +7,10 @@ import java.util.Set;
 
 import arem.Algoritmos.AFN2.AFN2;
 import arem.Algoritmos.AFN2.Estados2;
-import arem.Algoritmos.AFN2.GE;
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
 import arem.Algoritmos.AFNtoAFD.Subconjuntos;
 import arem.Algoritmos.AFNtoAFD.Tabla;
+import arem.Algoritmos.GE.GE;
 import arem.Grafo.GrafoGraphviz;
 import arem.Grafo.grafo;
 
@@ -32,7 +32,7 @@ public class AFNtoAFDhandler extends handler {
         imprimir(geAFD);
         grafo<EstadosAFN> grafo = new grafo(geAFD);
         GrafoGraphviz<EstadosAFN> grafoGraphviz = new GrafoGraphviz<>(geAFD);
-        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
+        String outputPath = "laboratorio/src/main/java/arem/assets/outputs/output.png";
         try {
             grafoGraphviz.createGraphViz(outputPath);
         } catch (IOException e) {

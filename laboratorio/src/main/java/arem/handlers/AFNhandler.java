@@ -7,7 +7,7 @@ import java.util.Set;
 
 import arem.Algoritmos.AFN2.AFN2;
 import arem.Algoritmos.AFN2.Estados2;
-import arem.Algoritmos.AFN2.GE;
+import arem.Algoritmos.GE.GE;
 import arem.Grafo.GrafoGraphviz;
 import arem.Grafo.grafo;
 

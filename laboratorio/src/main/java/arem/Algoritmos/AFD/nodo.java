@@ -7,13 +7,40 @@ public class nodo {
     private static int idCounter = 0;
     
     private int id;
+    private String identifier;
     private String value;
+    
     private nodo left;
     private nodo right;
     
     public nodo(String value) {
         this.id = idCounter++;
         this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+    
+    public String getOperatorType() {
+        char firstChar = identifier.charAt(0);
+        if (firstChar == 'α') {
+            return "|";
+        } else if (firstChar == 'β') {
+            return "*";
+        } else if (firstChar == 'γ') {
+            return ".";
+        } else if (value.equals("ε")){
+            return "ε";
+        }else {
+            return "";
+        }
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
     
     public int getId() {

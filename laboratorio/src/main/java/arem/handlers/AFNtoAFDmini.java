@@ -1,7 +1,7 @@
 package arem.handlers;
 
-import arem.Algoritmos.AFN2.GE;
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
+import arem.Algoritmos.GE.GE;
 import arem.Algoritmos.Minimizacion.AFDminimizado;
 import arem.Grafo.grafo;
 
@@ -16,9 +16,9 @@ public class AFNtoAFDmini extends AFNtoAFDhandler {
         super.AFNtoAFD();
 
         AFDminimizado afdMini = new AFDminimizado(super.geAFD.getTransitions());
-        boolean isAccepted = afdMini.simulate(".;-/.");
-        System.out.println(
-                "La cadena 'ababb' es " + (isAccepted ? "aceptada" : "rechazada") + " por el autómata minimizado.");
+        // boolean isAccepted = afdMini.simulate(".;-/.");
+        // System.out.println(
+        //         "La cadena 'ababb' es " + (isAccepted ? "aceptada" : "rechazada") + " por el autómata minimizado.");
         GE<EstadosAFN> geAFDmin = new GE<>(afdMini.getAfdMini());
         imprimir(geAFDmin);
         grafo<EstadosAFN> grafo = new grafo(geAFDmin);

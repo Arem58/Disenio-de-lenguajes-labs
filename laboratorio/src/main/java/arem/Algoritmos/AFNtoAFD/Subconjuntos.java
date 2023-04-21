@@ -22,7 +22,7 @@ public class Subconjuntos {
     private Estados2 inicial;
     private Estados2 finalN;
 
-    public static char id;
+    public static int id;
 
     public Set<EstadosAFN> getListaEstados() {
         return listaEstados;
@@ -39,7 +39,7 @@ public class Subconjuntos {
         this.inicial = inicial;
         this.finalN = finalN;
         this.tablaT = tablaT;
-        id = 'A';
+        id = 0;
         setTabla();
     }
 
@@ -116,6 +116,7 @@ public class Subconjuntos {
             for (Estados2 target : targes) {
                 if (target.equals(finalN)) {
                     estadosAFN.setIdentificador(TipoGrafo.FINAL);
+                    estadosAFN.setValorAceptacion(target.getId());
                 }
             }
         }

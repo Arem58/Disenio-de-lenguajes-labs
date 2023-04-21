@@ -1,5 +1,6 @@
 package arem.Grafo;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,15 +10,22 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
-import arem.Algoritmos.AFN2.GE;
+import arem.Algoritmos.GE.GE;
+import arem.Algoritmos.GE.GEString;
+import arem.Algoritmos.interfaces.IGE;
 import arem.Algoritmos.interfaces.estados;
 
 public class grafo<T extends estados> {
 
-    private GE<T> ge;
+    private Object ge;
 
     public grafo(GE<T> ge) {
         this.ge = ge;
+        graficar();
+    }
+
+    public grafo(GEString<T> geString) {
+        this.ge = geString;
         graficar();
     }
 
@@ -26,7 +34,14 @@ public class grafo<T extends estados> {
 
         Graph graph = new SingleGraph("Ejemplo de flechas");
 
-        for (T estado : ge.getListaEstados()) {
+        Set<T> listaEstados;
+        if (ge instanceof IGE) {
+            listaEstados = ((IGE<T>) ge).getListaEstados();
+        } else {
+            listaEstados = ((GEString<T>) ge).getListaEstados();
+        }
+
+        for (T estado : listaEstados) {
             Node nodo = graph.addNode(estado.toString());
             switch (estado.getIdentificador()) {
                 case FINAL:
@@ -41,27 +56,29 @@ public class grafo<T extends estados> {
                     nodo.setAttribute("ui.label", estado.toString());
                     break;
             }
-            // if (ge.getEntrada().equals(estado)) {
-            //     Node nodo = graph.addNode(estado.toString());
-            //     nodo.setAttribute("ui.label", estado.toString());
-            //     nodo.setAttribute("ui.style", "fill-color: blue;");
-            // } else if (ge.getSalida().equals(estado)) {
-            //     Node nodo = graph.addNode(estado.toString());
-            //     nodo.setAttribute("ui.label", estado.toString());
-            //     nodo.setAttribute("ui.style", "fill-color: red;");
-            // } else {
-            //     Node nodo = graph.addNode(estado.toString());
-            //     nodo.setAttribute("ui.label", estado.toString());
-            // }
         }
 
-        for (Map.Entry<T, Map<Character, Set<T>>> entry : ge.getTransitions().entrySet()) {
+        Map<T, Map<String, Set<T>>> transitions;
+        if (ge instanceof IGE) {
+            transitions = new HashMap<>();
+            for (Map.Entry<T, Map<Character, Set<T>>> entry : ((IGE<T>) ge).getTransitions().entrySet()) {
+                Map<String, Set<T>> stringTransitions = new HashMap<>();
+                for (Map.Entry<Character, Set<T>> innerEntry : entry.getValue().entrySet()) {
+                    stringTransitions.put(Character.toString(innerEntry.getKey()), innerEntry.getValue());
+                }
+                transitions.put(entry.getKey(), stringTransitions);
+            }
+        } else {
+            transitions = ((GEString<T>) ge).getTransitions();
+        }
+
+        for (Map.Entry<T, Map<String, Set<T>>> entry : transitions.entrySet()) {
             T estado = entry.getKey();
-            Map<Character, Set<T>> transitionMap = entry.getValue(); // Mapa interno de transiciones
+            Map<String, Set<T>> transitionMap = entry.getValue(); // Mapa interno de transiciones
 
             // Recorrer el mapa interno de transiciones
-            for (Map.Entry<Character, Set<T>> transitionEntry : transitionMap.entrySet()) {
-                char symbol = transitionEntry.getKey(); // Símbolo de entrada
+            for (Map.Entry<String, Set<T>> transitionEntry : transitionMap.entrySet()) {
+                String symbol = transitionEntry.getKey(); // Símbolo de entrada
                 Set<T> destinationStates = transitionEntry.getValue(); // Conjunto de estados de destino
 
                 // Recorrer el conjunto de estados de destino

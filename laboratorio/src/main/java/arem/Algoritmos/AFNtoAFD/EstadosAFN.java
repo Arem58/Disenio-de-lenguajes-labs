@@ -6,30 +6,40 @@ import arem.Algoritmos.enums.TipoGrafo;
 import arem.Algoritmos.interfaces.estados;
 
 public class EstadosAFN implements estados {
-    private Character id;
+    private String id;
+    private String valorAceptacion;
+    
     private TipoGrafo identificador;
-
+    
     @Override
     public void setIdentificador(TipoGrafo identificador) {
         this.identificador = identificador;
     }
-
+    
     @Override
     public TipoGrafo getIdentificador(){
         return this.identificador;
     }
-
+    
     @Override
     public String getId() {
         return String.valueOf(id);
     }
+    
+    public String getValorAceptacion() {
+        return valorAceptacion;
+    }
 
+    public void setValorAceptacion(String valorAceptacion) {
+        this.valorAceptacion = valorAceptacion;
+    }
+    
     public EstadosAFN() {
-        this.id = Subconjuntos.id;
+        this.id = "q" + Subconjuntos.id;
         identificador = TipoGrafo.NORMAL;
         Subconjuntos.id++;
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

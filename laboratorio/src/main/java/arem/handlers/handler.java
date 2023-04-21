@@ -12,6 +12,7 @@ import arem.Funciones.RevisionEx;
 
 public class handler {
     private final Scanner container = new Scanner(System.in);
+    public static String EndofLine = "";
 
     protected String getInput() {
         System.out.println("Ingrese una expresion regular: ");
@@ -26,7 +27,7 @@ public class handler {
 
         String expresion = expresionInicial.orElseGet(this::getInput);
         String key = optionalKey.orElse("");
-        
+
         revision = optionalKey.isPresent() ? new RevisionEx(expresion, key) : new RevisionEx(expresion);
         expresion = revision.getExpresion();
 
@@ -57,14 +58,10 @@ public class handler {
             System.out.println("Expresion extendida: " + expresion);
         }
 
-        if (key == ""){
+        if (key == "") {
             postfix = new Postfix();
             expresion = postfix.infixToPostfix(expresion);
-            if (key != "") {
-                Lenguaje2.setLenguajeFinal(expresion);
-            } else {
-                Lenguaje.setLenguajeFinal(expresion);
-            }
+            Lenguaje.setLenguajeFinal(expresion);
             System.out.println("Postfix: " + expresion);
         }
 

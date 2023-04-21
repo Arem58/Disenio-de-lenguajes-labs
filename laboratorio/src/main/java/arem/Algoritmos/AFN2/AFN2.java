@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import arem.Algoritmos.GE.GE;
 import arem.Algoritmos.enums.TipoGrafo;
 import arem.Funciones.Lenguaje;
 

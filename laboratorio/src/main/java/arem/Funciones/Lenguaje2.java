@@ -9,13 +9,15 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Lenguaje2 {
+import arem.Algoritmos.interfaces.ILenguaje;
+import arem.handlers.handler;
+
+public class Lenguaje2 implements ILenguaje{
     public static List<String> lenguajeInicial = new ArrayList<String>();
     public static Map<String, String> nuevoSimb = new HashMap<>(); // Para tokens a reemplazar fuera de las comillas
     public static Map<String, String> simbolosDentroComillas = new HashMap<>(); // Para tokens a reemplazar dentro de
                                                                                 // las comillas
     public static Map<String, String> viejoSimb = new HashMap<>(); // Para revertir los tokens reemplazados
-    public static String EndofLine;
 
     private static List<Character> expresionLen = new ArrayList<>();
 
@@ -23,6 +25,11 @@ public class Lenguaje2 {
     private static List<Character> parentesis = Arrays.asList('(', ')');
 
     public static boolean operadores;
+
+    @Override
+    public List<String> getLenguajeInicial() {
+        return lenguajeInicial;
+    }
 
     private static void setExpresionLen(String expresionLen) {
         for (int i = 0; i < expresionLen.length(); i++) {
@@ -143,7 +150,7 @@ public class Lenguaje2 {
         for (int i = 0; i < expresion.length(); i++) {
             char c = expresion.charAt(i);
             String s = String.valueOf(c);
-            if (!Postfix.precedence.containsKey(c) && !lenguajeInicial.contains(s)) {
+            if (!Postfix.precedence.containsKey(c) && !lenguajeInicial.contains(s)  && !Lenguaje2.viejoSimb.containsKey(s) && !s.equals(handler.EndofLine)) {
                 int indice = Lenguaje2.lenguajeInicial.indexOf(Lenguaje2.nuevoSimb.get(s));
                 if (indice != -1) {
                     Lenguaje2.lenguajeInicial.set(indice, s);

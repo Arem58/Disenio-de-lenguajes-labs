@@ -18,15 +18,21 @@ public class LectorDeArchivos {
     private final String LET_PATTERN = "let\\s+(\\w+)\\s*=\\s*(.+)";
     private final String RULE_PATTERN = "rule\\s+(tokens)\\s*=\\s*(.+)";
     private Map<String, String> expandedActions;
+    private Set<String> returnedTokens; 
 
+    
     private Map<String, String> definitions = new HashMap<>();
     private List<String> header;
     private List<String> trailer;
     private List<String> rules;
     private List<List<String>> actions;
     String fileName;
-
+    
     private boolean hasError;
+    
+    public Set<String> getReturnedTokens() {
+        return returnedTokens;
+    }
 
     public boolean isHasError() {
         return hasError;
@@ -39,6 +45,7 @@ public class LectorDeArchivos {
     public LectorDeArchivos(String fileName) {
         this.fileName = fileName;
         expandedActions = new LinkedHashMap<>();
+        returnedTokens = new HashSet<>();
         header = new ArrayList<>();
         trailer = new ArrayList<>();
         rules = new ArrayList<>();
@@ -175,6 +182,7 @@ public class LectorDeArchivos {
                 if (returnMatcher.find()) {
                     actionTokens = returnMatcher.group(1);
                     actionTokens = actionTokens.replaceAll("return", "").trim();
+                    returnedTokens.add(actionTokens);
                 } else {
                     actionTokens = action;
                     actionTokens = actionTokens.replaceAll("\\|", "").trim();

@@ -2,7 +2,7 @@
 
 let delim = ['\n']
 let ws = delim+
-let number = ["012"]
+let number = ["012"]+
 
 rule tokens = 
     ws
