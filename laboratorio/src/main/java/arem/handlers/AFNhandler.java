@@ -28,7 +28,7 @@ public class AFNhandler extends handler {
         grafo<Estados2> grafo = new grafo(ge);
         imprimir(ge);
         GrafoGraphviz<Estados2> grafoGraphviz = new GrafoGraphviz<>(ge);
-        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/output.png";
+        String outputPath = "/home/arem/Documents/Universidad/Lenguaje de Programacion/Laboratorios/Disenio-de-lenguajes-labs/laboratorio/src/main/java/arem/assets/outputs/grafo.png";
         try {
             grafoGraphviz.createGraphViz(outputPath);
         } catch (IOException e) {

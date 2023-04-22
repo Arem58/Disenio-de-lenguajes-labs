@@ -32,7 +32,7 @@ public class AFNtoAFDhandler extends handler {
         imprimir(geAFD);
         grafo<EstadosAFN> grafo = new grafo(geAFD);
         GrafoGraphviz<EstadosAFN> grafoGraphviz = new GrafoGraphviz<>(geAFD);
-        String outputPath = "laboratorio/src/main/java/arem/assets/outputs/output.png";
+        String outputPath = "laboratorio/src/main/java/arem/assets/outputs/grafo.png";
         try {
             grafoGraphviz.createGraphViz(outputPath);
         } catch (IOException e) {

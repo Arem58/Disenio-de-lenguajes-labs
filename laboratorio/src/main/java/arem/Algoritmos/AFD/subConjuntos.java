@@ -69,7 +69,8 @@ public class subConjuntos {
         setFinals();
     }
 
-    private void lenguajeHandler(String c, Set<Integer> Conjunto, EstadosAFN actual, Queue<Entry<EstadosAFN, Set<Integer>>> cola) {
+    private void lenguajeHandler(String c, Set<Integer> Conjunto, EstadosAFN actual,
+            Queue<Entry<EstadosAFN, Set<Integer>>> cola) {
         Set<Integer> NuevoConjunto = new HashSet<>();
         for (Integer target : Conjunto) {
             EstadosAFD estadoActual = getAfdNodeData.get(target.toString());
@@ -77,19 +78,22 @@ public class subConjuntos {
                 NuevoConjunto.addAll(estadoActual.getFollowpos());
             }
         }
-        EstadosAFN nuevoEstado = buscarSubconjunto(NuevoConjunto);
-        if (nuevoEstado == null) {
-            nuevoEstado = new EstadosAFN();
-            subConjuntos.put(nuevoEstado, NuevoConjunto);
-            cola.offer(new SimpleImmutableEntry<>(nuevoEstado, NuevoConjunto));
-        }
-        if (nuevoEstado != null) {
-            Map<String, Set<EstadosAFN>> transiciones = tablaS.get(actual);
-            if (transiciones == null) {
-                transiciones = new HashMap<>();
-                tablaS.put(actual, transiciones);
+
+        if (!NuevoConjunto.isEmpty()) {
+            EstadosAFN nuevoEstado = buscarSubconjunto(NuevoConjunto);
+            if (nuevoEstado == null) {
+                nuevoEstado = new EstadosAFN();
+                subConjuntos.put(nuevoEstado, NuevoConjunto);
+                cola.offer(new SimpleImmutableEntry<>(nuevoEstado, NuevoConjunto));
             }
-            transiciones.put(c, Collections.singleton(nuevoEstado));
+            if (nuevoEstado != null) {
+                Map<String, Set<EstadosAFN>> transiciones = tablaS.get(actual);
+                if (transiciones == null) {
+                    transiciones = new HashMap<>();
+                    tablaS.put(actual, transiciones);
+                }
+                transiciones.put(c, Collections.singleton(nuevoEstado));
+            }
         }
     }
 

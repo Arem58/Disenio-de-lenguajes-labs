@@ -16,6 +16,7 @@ import arem.Algoritmos.interfaces.ILenguaje;
 import arem.Funciones.Lenguaje;
 import arem.Funciones.Lenguaje2;
 import arem.Grafo.GrafoGraphviz;
+import arem.Grafo.arbol;
 import arem.Grafo.grafo;
 
 public class AFDhandler extends handler {
@@ -44,19 +45,19 @@ public class AFDhandler extends handler {
     private void AFD(){
         Arbol arbolg = new Arbol(expression);
         nodo root = arbolg.getRoot();
-        nodo.bfs(root);
+        // nodo.bfs(root);
+        String outputPath;
+        outputPath = "laboratorio/src/main/java/arem/assets/outputs/arbol.png";
+        visualizeTree(root, outputPath, acceptingStates);
+
         Tabla tabla = new Tabla(root);
         tabla.printTable();
         subConjuntos subconjuntos = new subConjuntos(tabla.getAfdNodeData(), root, acceptingStates, lenguaje);
         geAFD = new GEString<>(subconjuntos.getTablaS(), subconjuntos.getListaEstados());
         // grafo<EstadosAFN> grafo = new grafo(geAFD);
         GrafoGraphviz<EstadosAFN> grafoGraphviz = new GrafoGraphviz<>(geAFD);
-        String outputPath = "laboratorio/src/main/java/arem/assets/outputs/output.png";
-        try {
-            grafoGraphviz.createGraphViz(outputPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        outputPath = "laboratorio/src/main/java/arem/assets/outputs/grafo.png";
+        createGraph(grafoGraphviz, outputPath);
     }
 
     @Override
@@ -67,6 +68,22 @@ public class AFDhandler extends handler {
         input = "(" + input + ")#";
 
         return input;
+    }
+
+    private void visualizeTree(nodo root, String outputPath, Set<String> acceptingStates) {
+        try {
+            arbol.visualizeTree(root, outputPath, acceptingStates);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createGraph(GrafoGraphviz<EstadosAFN> grafoGraphviz, String outputPath) {
+        try {
+            grafoGraphviz.createGraphViz(outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // @Override

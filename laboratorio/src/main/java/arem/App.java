@@ -60,6 +60,9 @@ public final class App {
                 new GALhandler();
                 break;
 
+            case 6:
+                System.out.println("Has salido del programa");
+                break;
             default:
                 System.out.println("Opcion incorrecta");
                 break;
