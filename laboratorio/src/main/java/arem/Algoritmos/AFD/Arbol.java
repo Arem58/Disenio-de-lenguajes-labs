@@ -2,6 +2,7 @@ package arem.Algoritmos.AFD;
 
 import java.util.Stack;
 
+import arem.Funciones.Lenguaje;
 import arem.Funciones.Lenguaje2;
 
 public class Arbol {
@@ -73,6 +74,8 @@ public class Arbol {
                 default:
                     if (Lenguaje2.viejoSimb.containsKey(simbolo))
                         simbolo = Lenguaje2.viejoSimb.get(simbolo);
+                    else if (Lenguaje.nuevoSimb.containsKey(simbolo.charAt(0)))
+                        simbolo = Lenguaje.nuevoSimb.get(simbolo.charAt(0)).toString();
                     newNodo = new nodo(simbolo);
 
                     newNodo.setIdentifier(Integer.toString(characterId));

@@ -66,14 +66,14 @@ public class Lenguaje implements ILenguaje {
     public static void setLenguajeFinal(String expresion) {
         for (int i = 0; i < expresion.length(); i++) {
             char c = expresion.charAt(i);
-            if (!Postfix.precedence.containsKey(c) && !lenguajeInicial.contains(c)) {
+            if (!Postfix.precedence.containsKey(c) && !lenguajeInicial.contains(c) && !nuevoSimb.containsKey(c)) {
                 if (handler.EndofLine.isEmpty() || c != handler.EndofLine.charAt(0)){
-                    int indice = Lenguaje.lenguajeInicial.indexOf(Lenguaje.nuevoSimb.get(c));
-                    if (indice != -1) {
-                        Lenguaje.lenguajeInicial.set(indice, c);
-                    } else {
-                        Lenguaje.lenguajeInicial.add(c);
-                    }
+                    // int indice = Lenguaje.lenguajeInicial.indexOf(Lenguaje.nuevoSimb.get(c));
+                    // if (indice != -1) {
+                    //     Lenguaje.lenguajeInicial.set(indice, c);
+                    // } else {
+                    // }
+                    Lenguaje.lenguajeInicial.add(c);
                 }
             }
         }

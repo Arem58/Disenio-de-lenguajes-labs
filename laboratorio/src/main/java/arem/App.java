@@ -3,6 +3,7 @@ package arem;
 import java.io.IOException;
 import java.util.Scanner;
 
+import arem.Simulacion.AFD.AFDs;
 import arem.handlers.AFDhandler;
 import arem.handlers.AFNhandler;
 import arem.handlers.AFNtoAFDhandler;
@@ -35,7 +36,7 @@ public final class App {
      * 
      * @param args The arguments of the program.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         menuPrincipal();
         Scanner scanner = new Scanner(System.in);
         int opcion = scanner.nextInt();
@@ -53,7 +54,8 @@ public final class App {
                 break;
 
             case 4:
-                new AFDhandler();
+                AFDhandler afd = new AFDhandler();
+                AFDs.createWithStringKey(afd.getGeAFD(), 1);
                 break;
 
             case 5:

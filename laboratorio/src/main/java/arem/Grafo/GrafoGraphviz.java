@@ -47,7 +47,8 @@ public class GrafoGraphviz<T extends estados> {
         }
 
         for (T estado : listaEstados) {
-            MutableNode node = mutNode(estado.toString()).add(Label.of(estado.toString()));
+            String estadoLabel = getLabel(estado.toString());
+            MutableNode node = mutNode(estadoLabel).add(Label.of(estadoLabel));
             nodeMap.put(estado, node);
             graph.add(node);
 
@@ -78,13 +79,13 @@ public class GrafoGraphviz<T extends estados> {
         for (Map.Entry<T, Map<String, Set<T>>> entry : transitions.entrySet()) {
             T estado = entry.getKey();
             Map<String, Set<T>> transitionMap = entry.getValue();
-        
+
             Map<T, Set<String>> combinedTransitions = new HashMap<>();
-        
+
             for (Map.Entry<String, Set<T>> transitionEntry : transitionMap.entrySet()) {
                 String symbol = transitionEntry.getKey();
                 Set<T> destinationStates = transitionEntry.getValue();
-        
+
                 for (T destState : destinationStates) {
                     if (!combinedTransitions.containsKey(destState)) {
                         combinedTransitions.put(destState, new HashSet<>());
@@ -92,15 +93,15 @@ public class GrafoGraphviz<T extends estados> {
                     combinedTransitions.get(destState).add(symbol);
                 }
             }
-        
+
             MutableNode sourceNode = nodeMap.get(estado);
-        
+
             for (Map.Entry<T, Set<String>> combinedEntry : combinedTransitions.entrySet()) {
                 T destState = combinedEntry.getKey();
                 Set<String> symbols = combinedEntry.getValue();
                 MutableNode destNode = nodeMap.get(destState);
-        
-                String combinedLabel = String.join(",", symbols);
+
+                String combinedLabel = getLabel(String.join(",", symbols));
                 sourceNode.addLink(to(destNode).with(Label.of(combinedLabel), Style.BOLD));
             }
         }
@@ -108,5 +109,34 @@ public class GrafoGraphviz<T extends estados> {
         Graphviz.useEngine(new GraphvizCmdLineEngine()); // Use GraphvizV8Engine
         Graphviz.fromGraph(graph).width(1200).render(Format.PNG).toFile(new File(outputPath));
         System.out.println("Archivo '" + outputPath + "' creado.");
+    }
+
+    private static String getLabel(String value) {
+        StringBuilder labelBuilder = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char symbol = value.charAt(i);
+            if (symbol == '\\') {
+                i++;
+                if (i < value.length()) {
+                    char nextSymbol = value.charAt(i);
+                    switch (nextSymbol) {
+                        case 'n':
+                            labelBuilder.append("\\\\n");
+                            break;
+                        case 't':
+                            labelBuilder.append("\\\\t");
+                            break;
+                        case 's':
+                            labelBuilder.append("\\\\s");
+                            break;
+                        default:
+                            labelBuilder.append(nextSymbol);
+                    }
+                }
+            } else {
+                labelBuilder.append(symbol);
+            }
+        }
+        return labelBuilder.toString();
     }
 }

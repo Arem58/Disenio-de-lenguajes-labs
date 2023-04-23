@@ -151,12 +151,12 @@ public class Lenguaje2 implements ILenguaje{
             char c = expresion.charAt(i);
             String s = String.valueOf(c);
             if (!Postfix.precedence.containsKey(c) && !lenguajeInicial.contains(s)  && !Lenguaje2.viejoSimb.containsKey(s) && !s.equals(handler.EndofLine)) {
-                int indice = Lenguaje2.lenguajeInicial.indexOf(Lenguaje2.nuevoSimb.get(s));
-                if (indice != -1) {
-                    Lenguaje2.lenguajeInicial.set(indice, s);
-                } else {
-                    Lenguaje2.lenguajeInicial.add(s);
-                }
+                // int indice = Lenguaje2.lenguajeInicial.indexOf(Lenguaje2.nuevoSimb.get(s));
+                // if (indice != -1) {
+                //     Lenguaje2.lenguajeInicial.set(indice, s);
+                // } else {
+                // }
+                Lenguaje2.lenguajeInicial.add(s);
             }
         }
     }

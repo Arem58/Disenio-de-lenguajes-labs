@@ -3,6 +3,7 @@ package arem.handlers;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,15 +18,15 @@ import arem.Funciones.Lenguaje;
 import arem.Funciones.Lenguaje2;
 import arem.Grafo.GrafoGraphviz;
 import arem.Grafo.arbol;
-import arem.Grafo.grafo;
 
 public class AFDhandler extends handler {
 
     protected GEString<EstadosAFN> geAFD;
+    
     private Set<String> acceptingStates = new HashSet<>();
     private ILenguaje lenguaje;
     private String expression;
-
+    
     public AFDhandler() {
         super();
         this.lenguaje = new Lenguaje();
@@ -33,13 +34,17 @@ public class AFDhandler extends handler {
         this.expression = getExpresion(Optional.empty(), Optional.empty());
         AFD();
     }
-
+    
     public AFDhandler(Set<String> acceptingStates, String finalExpression){
         super();
         this.lenguaje = new Lenguaje2();
         this.acceptingStates.addAll(acceptingStates);
         this.expression = finalExpression;
         AFD();
+    }
+    
+    public Map<EstadosAFN, Map<String, Set<EstadosAFN>>> getGeAFD() {
+        return geAFD.getTransitions();
     }
 
     private void AFD(){

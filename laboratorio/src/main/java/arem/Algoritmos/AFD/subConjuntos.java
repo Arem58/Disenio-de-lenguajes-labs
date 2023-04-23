@@ -47,6 +47,7 @@ public class subConjuntos {
         Queue<Entry<EstadosAFN, Set<Integer>>> cola = new LinkedList<>();
         EstadosAFD inicial = getAfdNodeData.get(root.getIdentifier());
         EstadosAFN nuevoEstadoAFN = new EstadosAFN();
+        nuevoEstadoAFN.setIdentificador(TipoGrafo.INICIAL);
         subConjuntos.put(nuevoEstadoAFN, inicial.getFirstpos());
 
         cola.offer(new SimpleImmutableEntry<>(nuevoEstadoAFN, inicial.getFirstpos()));
