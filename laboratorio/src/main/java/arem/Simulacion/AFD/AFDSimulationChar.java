@@ -8,9 +8,15 @@ import arem.Algoritmos.interfaces.IAFDs;
 
 public class AFDSimulationChar implements IAFDs {
     private Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS;
+    private StringBuilder expresion;
 
     public AFDSimulationChar(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS) {
         this.tablaS = tablaS;
+    }
+
+    @Override
+    public String getExpresion() {
+        return expresion.toString();
     }
 
     @Override 

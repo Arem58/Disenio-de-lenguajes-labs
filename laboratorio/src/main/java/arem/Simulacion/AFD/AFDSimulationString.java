@@ -16,6 +16,16 @@ public class AFDSimulationString implements IAFDs {
     private StringBuilder expresion;
     private Map<Integer, Map<String, String>> tokensReturned = new HashMap<>();
     private int tokenCounter = 0;
+    private Set<String> returnedTokens = null;
+    private Set<String> tokens = null;
+
+    public AFDSimulationString(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> tablaS, Set<String> returnedTokens, Set<String> tokens) {
+        this.tablaS = tablaS;
+        this.returnedTokens = returnedTokens;
+        this.tokens = tokens;
+        expresion = new StringBuilder();
+        tokensReturned = new HashMap<>();
+    }
 
     public AFDSimulationString(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> tablaS, GALhandler galHandler) {
         this.tablaS = tablaS;
@@ -29,10 +39,13 @@ public class AFDSimulationString implements IAFDs {
     }
 
     @Override
+    public String getExpresion() {
+        return expresion.toString();
+    }
+
+    @Override
     public boolean simulate(String expresion) {
 
-        Set<String> returnedTokens = null;
-        Set<String> tokens = null;
         EstadosAFN currentState = getInitialState(tablaS);
         StringBuilder cache = new StringBuilder();
 
@@ -41,7 +54,6 @@ public class AFDSimulationString implements IAFDs {
             tokens = galHandler.getTokens();
         }
 
-        int tokenStart = 0;
         for (int i = 0; i < expresion.length(); i++) {
             char rawChar = expresion.charAt(i);
             String current;
