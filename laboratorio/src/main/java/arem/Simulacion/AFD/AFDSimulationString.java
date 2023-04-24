@@ -91,7 +91,7 @@ public class AFDSimulationString implements IAFDs {
                 if (returnedTokens.contains(newToken)) {
                     Map<String, String> tokenMap = new HashMap<>();
                     tokenMap.put(newToken, cache.toString());
-                    System.out.println("Token: " + newToken + " valor: " + cache);
+                    // System.out.println("Token: " + newToken + " valor: " + cache);
 
                     tokensReturned.put(tokenCounter, tokenMap);
                     tokenCounter++;

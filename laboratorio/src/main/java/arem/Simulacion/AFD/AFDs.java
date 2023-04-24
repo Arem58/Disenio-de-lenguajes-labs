@@ -11,11 +11,20 @@ import arem.handlers.GALhandler;
 public class AFDs {
 
     private IAFDs afd;
+    private boolean correct;
+
+    public boolean isCorrect() {
+        return correct;
+    }
+
+    public IAFDs getAfd() {
+        return afd;
+    }
 
     private AFDs(IAFDs afd, String input) {
         this.afd = afd;
-        boolean aceptado = afd.simulate(input);
-        if (aceptado) {
+        correct = afd.simulate(input);
+        if (correct) {
             System.out.println("La expresion: " + afd.getExpresion() + " es aceptable");
         }else{
             System.out.println("La expresion: " + afd.getExpresion() + " no es aceptable");

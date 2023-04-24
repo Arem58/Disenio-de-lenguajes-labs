@@ -9,6 +9,7 @@ import arem.handlers.AFNhandler;
 import arem.handlers.AFNtoAFDhandler;
 import arem.handlers.AFNtoAFDmini;
 import arem.handlers.GALhandler;
+import arem.handlers.GeneradorLexerhandler;
 
 /**
  * Hello world!
@@ -23,7 +24,8 @@ public final class App {
                         3. AFN --> AFD mini
                         4. AFD
                         5. GLA
-                        6. Salir
+                        6. Generar Lexer
+                        7. Salir
                     ----------------------
                 """);
     }
@@ -36,7 +38,7 @@ public final class App {
      * 
      * @param args The arguments of the program.
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         menuPrincipal();
         Scanner scanner = new Scanner(System.in);
         int opcion = scanner.nextInt();
@@ -63,6 +65,10 @@ public final class App {
                 break;
 
             case 6:
+                new GeneradorLexerhandler();
+                break;
+
+            case 7:
                 System.out.println("Has salido del programa");
                 break;
             default:

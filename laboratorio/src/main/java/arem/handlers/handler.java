@@ -19,7 +19,7 @@ public class handler {
         return container.nextLine();
     }
 
-    protected String getExpresion(Optional<String> expresionInicial, Optional<String> optionalKey) {
+    public String getExpresion(Optional<String> expresionInicial, Optional<String> optionalKey) {
 
         RevisionEx revision;
         Expansion expansion;

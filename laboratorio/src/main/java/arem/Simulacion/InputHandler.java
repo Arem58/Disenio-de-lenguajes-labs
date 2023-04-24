@@ -51,7 +51,7 @@ public class InputHandler {
 
             if (opcion >= 0 && opcion < lines.size()) {
                 expresion = lines.get(opcion);
-                System.out.println("Expresión seleccionada: " + expresion);
+                System.out.println("\nExpresión seleccionada: " + expresion + "\n");
                 break;
             } else {
                 System.out.println("Opción inválida. Por favor, seleccione una expresión válida.");
