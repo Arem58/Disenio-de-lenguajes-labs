@@ -72,7 +72,7 @@ public class AFDSimulationString implements IAFDs {
             Set<EstadosAFN> nextStatesSet = transitions.get(current);
 
             boolean updateCurrentState = true;
-            boolean isLastChar = i == expresion.length() - 1;
+            boolean isLastChar = i == expresion.length() - 1 && tokens != null;
             if (nextStatesSet == null || nextStatesSet.isEmpty() || isLastChar) {
                 if (isLastChar) {
                     cache.append(current);

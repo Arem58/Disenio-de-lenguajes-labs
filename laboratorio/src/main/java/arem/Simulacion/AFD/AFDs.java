@@ -3,6 +3,8 @@ package arem.Simulacion.AFD;
 import java.util.Map;
 import java.util.Set;
 
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
 import arem.Algoritmos.interfaces.IAFDs;
 import arem.Simulacion.InputHandler;
@@ -23,12 +25,14 @@ public class AFDs {
 
     private AFDs(IAFDs afd, String input) {
         this.afd = afd;
+        AnsiConsole.systemInstall();
         correct = afd.simulate(input);
         if (correct) {
-            System.out.println("La expresion: " + afd.getExpresion() + " es aceptable");
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("La expresion: " + afd.getExpresion() + " es aceptable").reset());
         }else{
-            System.out.println("La expresion: " + afd.getExpresion() + " no es aceptable");
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("La expresion: " + afd.getExpresion() + " no es aceptable").reset());
         }
+        AnsiConsole.systemUninstall();
     }
 
     public interface KeyType {
