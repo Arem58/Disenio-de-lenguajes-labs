@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class InputHandler {
 
@@ -32,16 +33,19 @@ public class InputHandler {
     }
 
     private String handlerReadFileInput(String filePath) {
-        List<String> lines = readFileInput(filePath);
+        List<String> lines = readFileInput(filePath).stream()
+            .filter(line -> !line.trim().isEmpty())
+            .collect(Collectors.toList());
 
         int opcion;
         String expresion;
 
         do {
-            System.out.println("Seleccione una expresión:");
+            System.out.println("\nSeleccione una expresión:");
             for (int i = 0; i < lines.size(); i++) {
                 System.out.println((i + 1) + ". " + lines.get(i));
             }
+            System.out.print("> ");
             Scanner scanner = new Scanner(System.in);
             opcion = scanner.nextInt() - 1;
 
@@ -53,7 +57,7 @@ public class InputHandler {
                 System.out.println("Opción inválida. Por favor, seleccione una expresión válida.");
             }
         } while (true);
-        
+
         return expresion;
     }
 

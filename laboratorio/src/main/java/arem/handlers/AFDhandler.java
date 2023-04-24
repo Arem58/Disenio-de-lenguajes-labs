@@ -56,7 +56,7 @@ public class AFDhandler extends handler {
         visualizeTree(root, outputPath, acceptingStates);
 
         Tabla tabla = new Tabla(root);
-        tabla.printTable();
+        // tabla.printTable();
         subConjuntos subconjuntos = new subConjuntos(tabla.getAfdNodeData(), root, acceptingStates, lenguaje);
         geAFD = new GEString<>(subconjuntos.getTablaS(), subconjuntos.getListaEstados());
         // grafo<EstadosAFN> grafo = new grafo(geAFD);

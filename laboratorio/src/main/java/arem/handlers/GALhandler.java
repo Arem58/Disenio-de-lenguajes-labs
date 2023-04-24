@@ -17,15 +17,18 @@ public class GALhandler extends handler {
     private static GALhandler instancia;
     private static final String Collection = null;
     private Set<String> returnedTokens;
+    private Set<String> Tokens;
 
     public GALhandler() {
-        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-2.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;
         }
         Map<String, String> expandedActions = archivo.getExpandedActions();
         this.returnedTokens = archivo.getReturnedTokens();
+        this.Tokens = expandedActions.keySet();
+        instancia = this;
         StringBuilder finalExpression = new StringBuilder();
         finalExpression.append("(");
         Iterator<Map.Entry<String, String>> iterator = expandedActions.entrySet().iterator();
@@ -65,13 +68,14 @@ public class GALhandler extends handler {
     }
 
     public static GALhandler obtenerInstancia() {
-        if (instancia == null) {
-            instancia = new GALhandler();
-        }
         return instancia;
     }
 
     public Set<String> getTokensDevueltos() {
         return returnedTokens;
+    }
+
+    public Set<String> getTokens(){
+        return Tokens;
     }
 }

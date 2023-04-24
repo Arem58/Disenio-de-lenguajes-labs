@@ -6,6 +6,7 @@ import java.util.Set;
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
 import arem.Algoritmos.interfaces.IAFDs;
 import arem.Simulacion.InputHandler;
+import arem.handlers.GALhandler;
 
 public class AFDs {
 
@@ -14,14 +15,15 @@ public class AFDs {
     private AFDs(IAFDs afd, String input){
         this.afd = afd;
         // String expresion = input;
-        System.out.println(afd.simulate(input));
+        boolean aceptado = afd.simulate(input);
         // Simulacion(expresion);
     }
 
     public interface KeyType {}
     
     public static AFDs createWithStringKey(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> tablaS, int option) {
-        return new AFDs(new AFDSimulationString(tablaS), new InputHandler(). handleInput(option));
+        GALhandler galHandler = GALhandler.obtenerInstancia();
+        return new AFDs(new AFDSimulationString(tablaS, galHandler), new InputHandler(). handleInput(option));
     }
 
     public static AFDs createWithCharKey(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS) {
