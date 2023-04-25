@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import arem.Simulacion.AFD.AFDs;
+import arem.Simulacion.AFN.AFNs;
 import arem.handlers.AFDhandler;
 import arem.handlers.AFNhandler;
 import arem.handlers.AFNtoAFDhandler;
@@ -44,7 +45,8 @@ public final class App {
         int opcion = scanner.nextInt();
         switch (opcion) {
             case 1:
-                new AFNhandler();
+                AFNhandler afn = new AFNhandler();
+                new AFNs(afn.getGe(), 1);
                 break;
 
             case 2:
