@@ -1,5 +1,7 @@
 package arem.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -19,7 +21,7 @@ public class handler {
         return container.nextLine();
     }
 
-    public String getExpresion(Optional<String> expresionInicial, Optional<String> optionalKey) {
+    public String getExpresion(Optional<String> expresionInicial, Optional<String> optionalKey, Optional<List<Character>> optionalList) {
 
         RevisionEx revision;
         Expansion expansion;
@@ -38,7 +40,7 @@ public class handler {
             Lenguaje2.setLenguajeInicial(expresion, key);
             if (Lenguaje2.operadores)
                 expresion = Lenguaje2.ConvertirCar(expresion);
-            Ejemplo3 expander = new Ejemplo3(expresion);
+            Ejemplo3 expander = new Ejemplo3(expresion, optionalList.get());
             expresion = expander.expand();
             System.out.println("Expanded regex: " + expresion);
         } else {

@@ -18,18 +18,22 @@ public class LectorDeArchivos {
     private final String LET_PATTERN = "let\\s+(\\w+)\\s*=\\s*(.+)";
     private final String RULE_PATTERN = "rule\\s+(tokens)\\s*=\\s*(.+)";
     private Map<String, String> expandedActions;
-    private Set<String> returnedTokens; 
+    private Set<String> returnedTokens;
+    private List<Character> unsustitutedExpressions;
 
-    
     private Map<String, String> definitions = new HashMap<>();
     private List<String> header;
     private List<String> trailer;
     private List<String> rules;
     private List<List<String>> actions;
     String fileName;
-    
+
     private boolean hasError;
-    
+
+    public List<Character> getUnsustitutedExpressions() {
+        return unsustitutedExpressions;
+    }
+
     public Set<String> getReturnedTokens() {
         return returnedTokens;
     }
@@ -46,6 +50,7 @@ public class LectorDeArchivos {
         this.fileName = fileName;
         expandedActions = new LinkedHashMap<>();
         returnedTokens = new HashSet<>();
+        unsustitutedExpressions = new ArrayList<>();
         header = new ArrayList<>();
         trailer = new ArrayList<>();
         rules = new ArrayList<>();
@@ -170,6 +175,13 @@ public class LectorDeArchivos {
                                 + "' no fue sustituida correctamente.");
                         hasError = true;
                         return;
+                    } else {
+                        String cleanedOriginalAction = originalAction.replaceAll("\\s+", "");
+                        cleanedOriginalAction = cleanedOriginalAction.replaceAll("\"", "");
+                        cleanedOriginalAction = cleanedOriginalAction.replaceAll("\'", "");
+                        for (int i = 0; i < cleanedOriginalAction.length(); i++) {
+                            unsustitutedExpressions.add(cleanedOriginalAction.charAt(i));
+                        }
                     }
                 }
 

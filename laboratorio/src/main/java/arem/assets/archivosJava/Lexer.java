@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import org.fusesource.jansi.Ansi;
 
 import arem.Algoritmos.interfaces.IAFDs;
 import arem.Funciones.Lenguaje2;
@@ -19,6 +22,7 @@ import arem.handlers.handler;
 
 public class Lexer {
 
+    private static List<Character> unsustitutedExpressions;
     private static Map<String, String> expandedActions;
     private static Set<String> returnedTokens;
     private static Set<String> Tokens;
@@ -42,7 +46,7 @@ public class Lexer {
                     value = value.substring(1);
                 }
 
-                finalExpression.append(handler.getExpresion(Optional.of(value), Optional.of(key)));
+                finalExpression.append(handler.getExpresion(Optional.of(value), Optional.of(key), Optional.of(unsustitutedExpressions)));
 
                 if (iterator.hasNext()) {
                     finalExpression.append("|");
@@ -60,9 +64,8 @@ public class Lexer {
             AFDs instance = AFDs.createWithStringKey(afd.getGeAFD(), 0, returnedTokens, Tokens);
             IAFDs afdInstance = instance.getAfd();
 
-            if (instance.isCorrect()){
                 printTokensInfo(afdInstance.getTokensReturned());
-            }
+
         } else {
             System.out.println("El mapa no se pudo cargar correctamente.");
         }
@@ -81,6 +84,7 @@ public class Lexer {
             expandedActions = loadedData.getExpandedActions();
             returnedTokens = loadedData.getReturnedTokens();
             Tokens = loadedData.getTokens();
+            unsustitutedExpressions = loadedData.getValidExpressions();
         }
     }
 
@@ -100,9 +104,15 @@ public class Lexer {
             for (Map.Entry<String, String> innerEntry : innerMap.entrySet()) {
                 String token = innerEntry.getKey();
                 String value = innerEntry.getValue();
-                tokensInfo.append(String.format("----- ----- ----- ----- ----- ----- ----- -----%n"));
-                tokensInfo.append(String.format("Token: %s%nValue: %s%n", token, value));
-                tokensInfo.append(String.format("----- ----- ----- ----- ----- ----- ----- -----%n%n"));
+                if ("Error".equals(token)) {
+                     tokensInfo.append(Ansi.ansi().fg(Ansi.Color.RED).a(String.format("----- ----- ----- ----- ----- ----- ----- -----%n")).reset());
+                     tokensInfo.append(Ansi.ansi().fg(Ansi.Color.RED).a(String.format("Token: %s%nValue: %s%n", token, value)).reset());
+                     tokensInfo.append(Ansi.ansi().fg(Ansi.Color.RED).a(String.format("----- ----- ----- ----- ----- ----- ----- -----%n%n")).reset());
+                } else { 
+                     tokensInfo.append(String.format("----- ----- ----- ----- ----- ----- ----- -----%n"));
+                     tokensInfo.append(String.format("Token: %s%nValue: %s%n", token, value));
+                     tokensInfo.append(String.format("----- ----- ----- ----- ----- ----- ----- -----%n%n"));
+                }
             }
         }
 

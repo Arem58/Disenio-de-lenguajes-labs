@@ -25,7 +25,7 @@ public class AFNhandler extends handler {
     }
 
     private void AFN() {
-        AFN2 afn2 = new AFN2(getExpresion(Optional.empty(), Optional.empty()));
+        AFN2 afn2 = new AFN2(getExpresion(Optional.empty(), Optional.empty(), Optional.empty()));
         ge = afn2.getGe();
         ge.setEntradaSalida();
         grafo<Estados2> grafo = new grafo(ge);

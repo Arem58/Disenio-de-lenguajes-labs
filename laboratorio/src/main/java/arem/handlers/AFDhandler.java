@@ -31,7 +31,7 @@ public class AFDhandler extends handler {
         super();
         this.lenguaje = new Lenguaje();
         acceptingStates = new HashSet<>(Collections.singleton("#"));
-        this.expression = getExpresion(Optional.empty(), Optional.empty());
+        this.expression = getExpresion(Optional.empty(), Optional.empty(), Optional.empty());
         AFD();
     }
     

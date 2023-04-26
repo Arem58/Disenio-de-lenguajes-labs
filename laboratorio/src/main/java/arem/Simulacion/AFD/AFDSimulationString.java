@@ -19,7 +19,8 @@ public class AFDSimulationString implements IAFDs {
     private Set<String> returnedTokens = null;
     private Set<String> tokens = null;
 
-    public AFDSimulationString(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> tablaS, Set<String> returnedTokens, Set<String> tokens) {
+    public AFDSimulationString(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> tablaS, Set<String> returnedTokens,
+            Set<String> tokens) {
         this.tablaS = tablaS;
         this.returnedTokens = returnedTokens;
         this.tokens = tokens;
@@ -48,6 +49,7 @@ public class AFDSimulationString implements IAFDs {
 
         EstadosAFN currentState = getInitialState(tablaS);
         StringBuilder cache = new StringBuilder();
+        this.expresion.append(expresion);
 
         if (galHandler != null) {
             returnedTokens = galHandler.getTokensDevueltos();
@@ -72,18 +74,40 @@ public class AFDSimulationString implements IAFDs {
             Set<EstadosAFN> nextStatesSet = transitions.get(current);
 
             boolean updateCurrentState = true;
+            boolean isNextStatesSetEmpty = nextStatesSet == null || nextStatesSet.isEmpty();
             boolean isLastChar = i == expresion.length() - 1 && tokens != null;
-            if (nextStatesSet == null || nextStatesSet.isEmpty() || isLastChar) {
-                if (isLastChar) {
-                    cache.append(current);
-                    this.expresion.append(current);
+            if (isNextStatesSetEmpty || isLastChar) {
+
+                if (tokens == null && returnedTokens == null) {
+                    return false;
                 }
+
+                if (currentState == getInitialState(tablaS) && isNextStatesSetEmpty){
+                    Map<String, String> tokenMap = new HashMap<>();
+                    tokenMap.put("Error", "Error");
+                    tokensReturned.put(tokenCounter, tokenMap);
+                    return false;
+                }
+
+                if (isLastChar && currentState == getInitialState(tablaS)){
+                    currentState = nextStatesSet.iterator().next();
+                    transitions = tablaS.get(currentState);
+                    updateCurrentState = false;
+                }
+
+                // if (isLastChar && !isNextStatesSetEmpty) {
+                //     cache.append(current);
+                // }
 
                 String newToken = getToken(transitions, tokens);
                 if (newToken == null) {
+                    Map<String, String> tokenMap = new HashMap<>();
+                    tokenMap.put("Error", "Error");
+                    tokensReturned.put(tokenCounter, tokenMap);
                     return false;
                 }
-                if (isLastChar) {
+                if (isLastChar && !isNextStatesSetEmpty) {
+                    cache.append(current);
                     nextStatesSet = transitions.get(newToken);
                     currentState = nextStatesSet.iterator().next();
                 }
@@ -96,7 +120,7 @@ public class AFDSimulationString implements IAFDs {
                     tokensReturned.put(tokenCounter, tokenMap);
                     tokenCounter++;
                 }
-                if (i < expresion.length() - 1) {
+                if (i < expresion.length() && currentState.getIdentificador() != TipoGrafo.FINAL) {
                     currentState = getInitialState(tablaS);
                     updateCurrentState = false;
                     i -= 1;
@@ -106,7 +130,6 @@ public class AFDSimulationString implements IAFDs {
             if (updateCurrentState) {
                 cache.append(current);
                 currentState = nextStatesSet.iterator().next();
-                this.expresion.append(current);
             }
         }
         return currentState.getIdentificador() == TipoGrafo.FINAL;
@@ -131,6 +154,15 @@ public class AFDSimulationString implements IAFDs {
 
         return finalInitialState;
     }
+
+    private EstadosAFN getFinalState(Map<EstadosAFN, Map<String, Set<EstadosAFN>>> afd) {
+        for (EstadosAFN state : afd.keySet()) {
+            if (state.getIdentificador() == TipoGrafo.FINAL) {
+                return state;
+            }
+        }
+        return null;
+    }    
 
     private String getToken(Map<String, Set<EstadosAFN>> transitions, Set<String> tokens) {
         if (tokens == null) {

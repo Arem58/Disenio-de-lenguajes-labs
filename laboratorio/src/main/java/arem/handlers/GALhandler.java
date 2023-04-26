@@ -20,7 +20,7 @@ public class GALhandler extends handler {
     private Set<String> Tokens;
 
     public GALhandler() {
-        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-2.yal";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-4.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;
@@ -41,7 +41,7 @@ public class GALhandler extends handler {
                 value = value.substring(1);
             }
 
-            finalExpression.append(getExpresion(Optional.of(value), Optional.of(key)));
+            finalExpression.append(getExpresion(Optional.of(value), Optional.of(key), Optional.of(archivo.getUnsustitutedExpressions())));
 
             if (iterator.hasNext()) {
                 finalExpression.append("|");

@@ -28,9 +28,9 @@ public class AFDs {
         AnsiConsole.systemInstall();
         correct = afd.simulate(input);
         if (correct) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("La expresion: " + afd.getExpresion() + " es aceptable").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("La expresion: " + afd.getExpresion().replace("\n", "") + " es aceptable").reset());
         }else{
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("La expresion: " + afd.getExpresion() + " no es aceptable").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("La expresion: " + afd.getExpresion().replace("\n", "") + " no es aceptable").reset());
         }
         AnsiConsole.systemUninstall();
     }

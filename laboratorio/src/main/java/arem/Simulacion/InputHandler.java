@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -20,7 +24,7 @@ public class InputHandler {
             data = readUserInput(scanner);
         } else {
             // Leer entrada del usuario desde un archivo
-            data = handlerReadFileInput("laboratorio/src/main/java/arem/assets/Simulacion/slr-2.1.yal.run");
+            data = handlerReadFileInput("laboratorio/src/main/java/arem/assets/Simulacion/slr-4.1.yal.run");
         }
 
         return data;
@@ -64,13 +68,10 @@ public class InputHandler {
     private List<String> readFileInput(String filePath) {
         List<String> lines = new ArrayList<>();
         try {
-            File file = new File(filePath);
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                lines.add(line);
-            }
-            bufferedReader.close();
+            String content = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+            lines = Arrays.stream(content.split("(?<=\\n)"))
+                    .filter(line -> !line.trim().isEmpty())
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }

@@ -1,203 +1,203 @@
 package arem.Algoritmos.Minimizacion;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import arem.Algoritmos.AFNtoAFD.EstadosAFN;
 import arem.Algoritmos.enums.TipoGrafo;
-import arem.Funciones.Lenguaje;
 
 public class AFDminimizado {
 
     private Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd;
-    private Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afdMini;
+    private Set<Set<EstadosAFN>> totalSet = new HashSet<>();
 
-    public Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> getAfdMini() {
-        return afdMini;
+    public Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> getMinimizedAFD() {
+        Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> minimizedAFD = new HashMap<>();
+
+        for (Set<EstadosAFN> stateSet : totalSet) {
+            EstadosAFN representative = stateSet.iterator().next();
+            Map<Character, Set<EstadosAFN>> transitions = afd.get(representative);
+            Map<Character, Set<EstadosAFN>> newTransitions = new HashMap<>();
+
+            for (Character symbol : transitions.keySet()) {
+                Set<EstadosAFN> targetStates = transitions.get(symbol);
+                for (Set<EstadosAFN> targetSet : totalSet) {
+                    if (belongsToSameSet(targetStates, targetSet)) {
+                        newTransitions.put(symbol, new HashSet<>(targetSet));
+                        break;
+                    }
+                }
+            }
+
+            minimizedAFD.put(representative, newTransitions);
+        }
+
+        return minimizedAFD;
     }
 
     public AFDminimizado(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
         this.afd = afd;
-        minimizeAFD();
     }
 
-    public void minimizeAFD() {
-        List<Set<EstadosAFN>> partitions = initializePartitions();
-        Queue<Set<EstadosAFN>> queue = new LinkedList<>(partitions);
-        Set<Character> alphabet = new HashSet<>(Lenguaje.lenguajeInicial);
-
-        while (!queue.isEmpty()) {
-            Set<EstadosAFN> partition = queue.poll();
-
-            for (Character symbol : alphabet) {
-                Map<Set<EstadosAFN>, Set<EstadosAFN>> affectedPartitions = new HashMap<>();
-
-                for (EstadosAFN state : partition) {
-                    Map<Character, Set<EstadosAFN>> transitions = afd.get(state);
-                    Set<EstadosAFN> targetStates = transitions.get(symbol);
-
-                    if (targetStates != null) {
-                        for (EstadosAFN targetState : targetStates) {
-                            Set<EstadosAFN> affectedPartition = findPartition(targetState, partitions);
-                            affectedPartitions.computeIfAbsent(affectedPartition, k -> new HashSet<>()).add(targetState);
-                        }
-                    }
-                }
-
-                for (Set<EstadosAFN> affectedPartition : affectedPartitions.keySet()) {
-                    if (affectedPartition.size() > 1) {
-                        Set<EstadosAFN> intersection = affectedPartitions.get(affectedPartition);
-                        Set<EstadosAFN> difference = new HashSet<>(affectedPartition);
-                        difference.removeAll(intersection);
-
-                        partitions.remove(affectedPartition);
-                        partitions.add(intersection);
-                        partitions.add(difference);
-
-                        if (queue.contains(affectedPartition)) {
-                            queue.remove(affectedPartition);
-                            queue.add(intersection);
-                            queue.add(difference);
-                        } else {
-                            if (intersection.size() <= difference.size()) {
-                                queue.add(intersection);
-                            } else {
-                                queue.add(difference);
-                            }
-                        }
-                    }
+    public void minimize() {
+        init(totalSet);
+        int count = 0;
+        while (true) {
+            System.out.println("Iteración: " + count); // Agregar mensaje de registro
+            if (count == totalSet.size())
+                break;
+            else
+                count = 0;
+            Set<Set<EstadosAFN>> copyOfTotalSet = new HashSet<>(totalSet);
+            for (Set<EstadosAFN> set : copyOfTotalSet) {
+                if (isIndivisible(set)) {
+                    count++;
+                    continue;
+                } else {
+                    System.out.println("Minimizando: " + set); // Agregar mensaje de registro
+                    minimize(set);
                 }
             }
         }
+    }    
 
-        buildMinimizedAFD(partitions);
-    }
-
-    private Set<EstadosAFN> findPartition(EstadosAFN state, List<Set<EstadosAFN>> partitions) {
-        for (Set<EstadosAFN> partition : partitions) {
-            if (partition.contains(state)) {
-                return partition;
-            }
-        }
-        return null;
-    }
-
-    private List<Set<EstadosAFN>> initializePartitions() {
-        Set<EstadosAFN> finalStates = new HashSet<>();
-        Set<EstadosAFN> nonFinalStates = new HashSet<>();
+    private void init(Set<Set<EstadosAFN>> totalSet) {
+        Set<EstadosAFN> terminal = new HashSet<>();
+        Set<EstadosAFN> nonTerminal = new HashSet<>();
 
         for (EstadosAFN state : afd.keySet()) {
-            if (state.getIdentificador() == TipoGrafo.FINAL) {
-                finalStates.add(state);
+            if (isAceptacion(state)) {
+                terminal.add(state);
             } else {
-                nonFinalStates.add(state);
+                nonTerminal.add(state);
             }
         }
-
-        List<Set<EstadosAFN>> partitions = new ArrayList<>();
-        partitions.add(finalStates);
-        partitions.add(nonFinalStates);
-        return partitions;
+        totalSet.add(nonTerminal);
+        totalSet.add(terminal);
     }
 
-    private void split(Set<EstadosAFN> partition, Set<Character> alphabet, List<Set<EstadosAFN>> newPartitions,
-            List<Set<EstadosAFN>> partitions) {
-        Map<String, Set<EstadosAFN>> groups = new HashMap<>();
+    private boolean isEndState(EstadosAFN state) {
+        return isAceptacion(state);
+    }
 
-        for (EstadosAFN state : partition) {
-            Map<Character, Set<EstadosAFN>> transitions = afd.get(state);
-
-            StringBuilder groupKeyBuilder = new StringBuilder();
-            for (Character symbol : alphabet) {
-                Set<EstadosAFN> targetStates = transitions.get(symbol);
-                if (targetStates != null) {
-                    for (EstadosAFN targetState : targetStates) {
-                        groupKeyBuilder.append(
-                                findPartitionIndex(targetState, newPartitions.isEmpty() ? partitions : newPartitions));
-                        groupKeyBuilder.append(",");
+    private boolean isIndivisible(Set<EstadosAFN> set) {
+        if (set.size() == 1)
+            return true;
+        else {
+            EstadosAFN state = set.iterator().next();
+            Map<Character, Set<EstadosAFN>> stateTransitions = afd.get(state);
+            if (stateTransitions == null) {
+                return true; // Si no hay transiciones para el estado, lo consideramos indivisible
+            }
+            for (Character input : stateTransitions.keySet()) {
+                Set<EstadosAFN> temp = new HashSet<>();
+                for (EstadosAFN s : set) {
+                    Set<EstadosAFN> destination = afd.get(s).get(input);
+                    if (destination != null && !destination.isEmpty()) {
+                        temp.addAll(destination);
                     }
-                } else {
-                    groupKeyBuilder.append("_,");
+                }
+                if (inTotalSet(temp))
+                    continue;
+                else {
+                    return false;
                 }
             }
-
-            String groupKey = groupKeyBuilder.toString();
-            groups.computeIfAbsent(groupKey, k -> new HashSet<>()).add(state);
         }
+        return true;
+    }    
 
-        newPartitions.addAll(groups.values());
+    private boolean inTotalSet(Set<EstadosAFN> temp) {
+        if (temp.isEmpty())
+            return true;
+        Set<Integer> indexs = new HashSet<>();
+        for (EstadosAFN state : temp) {
+            indexs.add(getSetNumber(state));
+        }
+        return indexs.size() == 1;
     }
 
-    private int findPartitionIndex(EstadosAFN state, List<Set<EstadosAFN>> partitions) {
-        for (int i = 0; i < partitions.size(); i++) {
-            if (partitions.get(i).contains(state)) {
-                return i;
+    private int getSetNumber(EstadosAFN state) {
+        int i = 0;
+        for (Set<EstadosAFN> a : totalSet) {
+            for (EstadosAFN b : a) {
+                if (b.equals(state))
+                    return i;
             }
+            i++;
         }
         return -1;
     }
 
-    private void buildMinimizedAFD(List<Set<EstadosAFN>> partitions) {
-        Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> minimizedAFD = new HashMap<>();
-        Map<EstadosAFN, EstadosAFN> stateMapping = new HashMap<>();
-
-        for (Set<EstadosAFN> partition : partitions) {
-            EstadosAFN representativeState = partition.iterator().next();
-            for (EstadosAFN state : partition) {
-                stateMapping.put(state, representativeState);
-            }
-        }
-
-        for (Map.Entry<EstadosAFN, Map<Character, Set<EstadosAFN>>> entry : afd.entrySet()) {
-            EstadosAFN originalState = entry.getKey();
-            EstadosAFN representativeState = stateMapping.get(originalState);
-            if (!minimizedAFD.containsKey(representativeState)) {
-                Map<Character, Set<EstadosAFN>> newTransitions = new HashMap<>();
-                for (Map.Entry<Character, Set<EstadosAFN>> transition : entry.getValue().entrySet()) {
-                    Set<EstadosAFN> newTargetStates = new HashSet<>();
-                    for (EstadosAFN targetState : transition.getValue()) {
-                        newTargetStates.add(stateMapping.get(targetState));
+    private void minimize(Set<EstadosAFN> set) {
+        System.out.println("Minimizando subconjunto: " + set); // Agregar mensaje de registro
+        Map<String, Set<EstadosAFN>> partitions = new HashMap<>();
+    
+        for (Character input : afd.get(set.iterator().next()).keySet()) {
+            for (EstadosAFN state : set) {
+                Set<EstadosAFN> destination = afd.get(state).get(input);
+    
+                if (destination != null) {
+                    String partitionKey = "";
+                    for (Set<EstadosAFN> subset : totalSet) {
+                        if (belongsToSameSet(destination, subset)) {
+                            partitionKey = subset.toString();
+                            break;
+                        }
                     }
-                    newTransitions.put(transition.getKey(), newTargetStates);
+    
+                    if (!partitions.containsKey(partitionKey)) {
+                        partitions.put(partitionKey, new HashSet<>());
+                    }
+                    partitions.get(partitionKey).add(state);
                 }
-                minimizedAFD.put(representativeState, newTransitions);
             }
         }
+    
+        if (partitions.size() > 1) {
+            System.out.println("Particiones encontradas: " + partitions); // Agregar mensaje de registro
+            totalSet.remove(set);
+            for (Set<EstadosAFN> newSet : partitions.values()) {
+                totalSet.add(newSet);
+            }
+        }
+    }    
 
-        afdMini = minimizedAFD;
+    private boolean belongsToSameSet(Set<EstadosAFN> destination, Set<EstadosAFN> subset) {
+        for (EstadosAFN state : destination) {
+            if (!subset.contains(state)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean simulate(String input) {
-        if (afdMini == null || afdMini.isEmpty()) {
+        if (afd == null || afd.isEmpty()) {
             return false;
         }
-    
-        EstadosAFN currentState = getInitialState(afdMini);
-    
+
+        EstadosAFN currentState = getInitialState(afd);
+
         for (int i = 0; i < input.length(); i++) {
             char symbol = input.charAt(i);
-            
-            if (!afdMini.containsKey(currentState)) {
+
+            if (!afd.containsKey(currentState)) {
                 return false;
             }
-            
-            Map<Character, Set<EstadosAFN>> transitions = afdMini.get(currentState);
+
+            Map<Character, Set<EstadosAFN>> transitions = afd.get(currentState);
             Set<EstadosAFN> nextStateSet = transitions.get(symbol);
             if (nextStateSet == null || nextStateSet.isEmpty()) {
                 return false;
             }
             currentState = nextStateSet.iterator().next();
         }
-    
+
         return currentState.getIdentificador() == TipoGrafo.FINAL;
     }
-    
 
     private EstadosAFN getInitialState(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
         EstadosAFN finalInitialState = null;
@@ -219,4 +219,7 @@ public class AFDminimizado {
         return finalInitialState;
     }
 
+    private boolean isAceptacion(EstadosAFN state) {
+        return state.getIdentificador() == TipoGrafo.FINAL;
+    }
 }

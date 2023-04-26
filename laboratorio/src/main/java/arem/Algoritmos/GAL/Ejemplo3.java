@@ -1,10 +1,12 @@
 package arem.Algoritmos.GAL;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Ejemplo3 {
     private String regex;
+    private List<Character> validExpressions;
     private String[] rangePatterns = new String[] {
             "(''|\"\"|\\\\[tsn])", // delim
             "([\'\"])(\\w)(?:(\\1-\\1)(\\w))?(\\1)", // letter
@@ -12,8 +14,9 @@ public class Ejemplo3 {
             "\'(.*?)\'" // single character
     };
 
-    public Ejemplo3(String regex) {
+    public Ejemplo3(String regex, List<Character> validExpressions) {
         this.regex = regex;
+        this.validExpressions = validExpressions;
     }
 
     public String expand() {
@@ -78,7 +81,8 @@ public class Ejemplo3 {
                                     i++; // Increment i to skip the next character
                                     expandedRegex.append(matcher.group(1).charAt(i));
                                 }
-                                if (i != matcher.group(1).length() - 1) {
+                                if (i != matcher.group(1).length() - 1
+                                        && (!validExpressions.contains(currentChar))) {
                                     expandedRegex.append('|');
                                 }
                             }
