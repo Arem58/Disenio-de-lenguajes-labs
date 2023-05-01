@@ -207,6 +207,51 @@ public class AFDminimizado {
         return true;
     }
 
+    public boolean simulate(String input) {
+        if (afd == null || afd.isEmpty()) {
+            return false;
+        }
+
+        EstadosAFN currentState = getInitialState(afd);
+
+        for (int i = 0; i < input.length(); i++) {
+            char symbol = input.charAt(i);
+
+            if (!afd.containsKey(currentState)) {
+                return false;
+            }
+
+            Map<Character, Set<EstadosAFN>> transitions = afd.get(currentState);
+            Set<EstadosAFN> nextStateSet = transitions.get(symbol);
+            if (nextStateSet == null || nextStateSet.isEmpty()) {
+                return false;
+            }
+            currentState = nextStateSet.iterator().next();
+        }
+
+        return currentState.getIdentificador() == TipoGrafo.FINAL;
+    }
+
+    private EstadosAFN getInitialState(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
+        EstadosAFN finalInitialState = null;
+
+        for (EstadosAFN state : afd.keySet()) {
+            if (state.getIdentificador() == TipoGrafo.INICIAL) {
+                return state;
+            } else if (state.getIdentificador() == TipoGrafo.FINAL) {
+                Map<Character, Set<EstadosAFN>> transitions = afd.get(state);
+                for (Set<EstadosAFN> targetStates : transitions.values()) {
+                    if (targetStates.contains(state)) {
+                        finalInitialState = state;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return finalInitialState;
+    }
+
     private boolean isAceptacion(EstadosAFN state) {
         return state.getIdentificador() == TipoGrafo.FINAL;
     }

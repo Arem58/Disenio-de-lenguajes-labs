@@ -44,12 +44,23 @@ public class AFDSimulationChar implements IAFDs {
         return currentState.getIdentificador() == TipoGrafo.FINAL;
     }
 
-    private EstadosAFN getInitialState(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS) {
-        for (EstadosAFN state : tablaS.keySet()) {
+    private EstadosAFN getInitialState(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
+        EstadosAFN finalInitialState = null;
+
+        for (EstadosAFN state : afd.keySet()) {
             if (state.getIdentificador() == TipoGrafo.INICIAL) {
                 return state;
+            } else if (state.getIdentificador() == TipoGrafo.FINAL) {
+                Map<Character, Set<EstadosAFN>> transitions = afd.get(state);
+                for (Set<EstadosAFN> targetStates : transitions.values()) {
+                    if (targetStates.contains(state)) {
+                        finalInitialState = state;
+                        break;
+                    }
+                }
             }
         }
-        return null;
+
+        return finalInitialState;
     }
 }
