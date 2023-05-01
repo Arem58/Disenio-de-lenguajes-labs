@@ -1,5 +1,7 @@
 package arem.Algoritmos.Minimizacion;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,27 +17,36 @@ public class AFDminimizado {
 
     public Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> getMinimizedAFD() {
         Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> minimizedAFD = new HashMap<>();
-
+    
         for (Set<EstadosAFN> stateSet : totalSet) {
-            EstadosAFN representative = stateSet.iterator().next();
-            Map<Character, Set<EstadosAFN>> transitions = afd.get(representative);
+            // Encuentra el estado con el número más bajo en el conjunto
+            EstadosAFN lowestState = stateSet.stream()
+                    .min(Comparator.comparing(EstadosAFN::getId))
+                    .orElseThrow(() -> new IllegalStateException("Conjunto vacío en totalSet"));
+    
+            Map<Character, Set<EstadosAFN>> transitions = afd.get(lowestState);
             Map<Character, Set<EstadosAFN>> newTransitions = new HashMap<>();
-
+    
             for (Character symbol : transitions.keySet()) {
                 Set<EstadosAFN> targetStates = transitions.get(symbol);
                 for (Set<EstadosAFN> targetSet : totalSet) {
                     if (belongsToSameSet(targetStates, targetSet)) {
-                        newTransitions.put(symbol, new HashSet<>(targetSet));
+                        // Encuentra el estado con el número más bajo en el conjunto de estados destino
+                        EstadosAFN lowestTargetState = targetSet.stream()
+                                .min(Comparator.comparing(EstadosAFN::getId))
+                                .orElseThrow(() -> new IllegalStateException("Conjunto vacío en totalSet"));
+    
+                        newTransitions.put(symbol, new HashSet<>(Collections.singleton(lowestTargetState)));
                         break;
                     }
                 }
             }
-
-            minimizedAFD.put(representative, newTransitions);
+    
+            minimizedAFD.put(lowestState, newTransitions);
         }
-
+    
         return minimizedAFD;
-    }
+    }           
 
     public AFDminimizado(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
         this.afd = afd;
@@ -74,7 +85,9 @@ public class AFDminimizado {
                 nonTerminal.add(state);
             }
         }
-        totalSet.add(nonTerminal);
+        if (!nonTerminal.isEmpty()) {
+            totalSet.add(nonTerminal);
+        }
         totalSet.add(terminal);
     }
 
@@ -156,14 +169,34 @@ public class AFDminimizado {
             }
         }
     
+        // Verifica si hay estados duplicados en las particiones
+        Map<EstadosAFN, Integer> stateCounts = new HashMap<>();
+        for (Set<EstadosAFN> partition : partitions.values()) {
+            for (EstadosAFN state : partition) {
+                stateCounts.put(state, stateCounts.getOrDefault(state, 0) + 1);
+            }
+        }
+    
+        for (Map.Entry<EstadosAFN, Integer> entry : stateCounts.entrySet()) {
+            if (entry.getValue() > 1) {
+                // Si hay un estado duplicado, elimínalo de la partición que sea idéntica a 'set'
+                partitions.get(set.toString()).remove(entry.getKey());
+            }
+        }
+    
         if (partitions.size() > 1) {
             System.out.println("Particiones encontradas: " + partitions); // Agregar mensaje de registro
             totalSet.remove(set);
+            Set<EstadosAFN> remainingStates = new HashSet<>(set);
             for (Set<EstadosAFN> newSet : partitions.values()) {
                 totalSet.add(newSet);
+                remainingStates.removeAll(newSet);
+            }
+            if (!remainingStates.isEmpty()) {
+                totalSet.add(remainingStates);
             }
         }
-    }    
+    }                
 
     private boolean belongsToSameSet(Set<EstadosAFN> destination, Set<EstadosAFN> subset) {
         for (EstadosAFN state : destination) {
@@ -172,51 +205,6 @@ public class AFDminimizado {
             }
         }
         return true;
-    }
-
-    public boolean simulate(String input) {
-        if (afd == null || afd.isEmpty()) {
-            return false;
-        }
-
-        EstadosAFN currentState = getInitialState(afd);
-
-        for (int i = 0; i < input.length(); i++) {
-            char symbol = input.charAt(i);
-
-            if (!afd.containsKey(currentState)) {
-                return false;
-            }
-
-            Map<Character, Set<EstadosAFN>> transitions = afd.get(currentState);
-            Set<EstadosAFN> nextStateSet = transitions.get(symbol);
-            if (nextStateSet == null || nextStateSet.isEmpty()) {
-                return false;
-            }
-            currentState = nextStateSet.iterator().next();
-        }
-
-        return currentState.getIdentificador() == TipoGrafo.FINAL;
-    }
-
-    private EstadosAFN getInitialState(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> afd) {
-        EstadosAFN finalInitialState = null;
-
-        for (EstadosAFN state : afd.keySet()) {
-            if (state.getIdentificador() == TipoGrafo.INICIAL) {
-                return state;
-            } else if (state.getIdentificador() == TipoGrafo.FINAL) {
-                Map<Character, Set<EstadosAFN>> transitions = afd.get(state);
-                for (Set<EstadosAFN> targetStates : transitions.values()) {
-                    if (targetStates.contains(state)) {
-                        finalInitialState = state;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return finalInitialState;
     }
 
     private boolean isAceptacion(EstadosAFN state) {

@@ -54,7 +54,8 @@ public final class App {
                 break;
 
             case 3:
-                new AFNtoAFDmini();
+                AFNtoAFDmini afDmini = new AFNtoAFDmini();
+                AFDs.createWithCharKey(afDmini.getGeAFDmin().getTransitions());
                 break;
 
             case 4:

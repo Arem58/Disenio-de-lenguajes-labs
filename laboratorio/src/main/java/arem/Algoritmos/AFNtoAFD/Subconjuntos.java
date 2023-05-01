@@ -49,6 +49,7 @@ public class Subconjuntos {
         Set<Estados2> conjuntoInicial = cerraduraEpsilon(Collections.singleton(inicial));
 
         EstadosAFN nuevoEstadoAFN = new EstadosAFN();
+        nuevoEstadoAFN.setIdentificador(TipoGrafo.INICIAL);
         subConjuntos.put(nuevoEstadoAFN, conjuntoInicial);
         pila.offer(conjuntoInicial);
         pilaEstados.offer(nuevoEstadoAFN);

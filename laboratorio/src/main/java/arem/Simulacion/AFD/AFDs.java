@@ -50,9 +50,4 @@ public class AFDs {
     public static AFDs createWithCharKey(Map<EstadosAFN, Map<Character, Set<EstadosAFN>>> tablaS) {
         return new AFDs(new AFDSimulationChar(tablaS), new InputHandler().handleInput(1));
     }
-
-    private void Simulacion(String expresion) {
-
-    }
-
 }

@@ -83,14 +83,22 @@ public class grafo<T extends estados> {
 
                 // Recorrer el conjunto de estados de destino
                 for (T destState : destinationStates) {
-                    Edge edge = graph.addEdge(estado.toString() + destState.toString(), estado.toString(),
-                            destState.toString(), true);
+                    String edgeId = estado.toString() + destState.toString();
+                    Edge edge = graph.getEdge(edgeId);
+                
+                    if (edge == null) { // Si el borde no existe, crea uno nuevo
+                        edge = graph.addEdge(edgeId, estado.toString(), destState.toString(), true);
+                        edge.setAttribute("ui.label", symbol);
+                    } else { // Si el borde ya existe, actualiza su etiqueta
+                        String existingLabel = (String) edge.getAttribute("ui.label");
+                        edge.setAttribute("ui.label", existingLabel + ", " + symbol);
+                    }
+                
                     Edge recursor = graph.getEdge(destState.toString() + estado.toString());
                     if (recursor != null) {
                         edge.setAttribute("ui.style", "text-offset: -30px, 0px;");
                         recursor.setAttribute("ui.style", "text-offset: 30px, 0px;");
                     }
-                    edge.setAttribute("ui.label", symbol);
                 }
             }
         }
