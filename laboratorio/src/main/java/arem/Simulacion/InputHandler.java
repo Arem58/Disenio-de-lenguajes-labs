@@ -24,7 +24,7 @@ public class InputHandler {
             data = readUserInput(scanner);
         } else {
             // Leer entrada del usuario desde un archivo
-            data = handlerReadFileInput("laboratorio/src/main/java/arem/assets/Simulacion/slr-1.1.yal.run");
+            data = handlerReadFileInput("laboratorio/src/main/java/arem/assets/Simulacion/slr-3.1.yal.run");
         }
 
         return data;

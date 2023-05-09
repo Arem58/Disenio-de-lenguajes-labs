@@ -73,49 +73,63 @@ public class AnalisisSintacticoHelper {
             follow.put(produccion.getNoTerminal(), new HashSet<>());
         }
 
-        // Agrego el símbolo $
+        // Agrego el simbolo $
         follow.get(producciones.get(0).getNoTerminal()).add("$");
 
         boolean cambio;
-        do {
-            cambio = false;
+        cambio = false;
+        int cambios = 0;
+        for (int proceso = 0; proceso < 2; proceso++) {
             for (Produccion produccion : producciones) {
                 String noTerminal = produccion.getNoTerminal();
                 List<String> finalProduccion = new ArrayList<>(produccion.getFinalProduccion());
 
-                for (int i = 0; i < finalProduccion.size(); i++) {
-                    String symbol = finalProduccion.get(i);
+                if (finalProduccion.size() == 1) {
+                    finalProduccion.add(0, "ε");
+                }
 
-                    if (!Tokens.contains(symbol)) {
-                        Set<String> setFollow = follow.get(symbol);
-                        Set<String> previousFollow = new HashSet<>(setFollow);
+                Set<String> setFollow = new HashSet<>();
+                Set<String> previousFollow = new HashSet<>();
 
-                        if (i + 1 < finalProduccion.size()) {
-                            String nextSymbol = finalProduccion.get(i + 1);
-
-                            if (Tokens.contains(nextSymbol)) {
-                                setFollow.add(nextSymbol);
-                            } else {
-                                Set<String> firstSet = first.get(nextSymbol);
-                                setFollow.addAll(firstSet);
-
-                                if (firstSet.contains("ε")) {
-                                    setFollow.remove("ε");
-                                    setFollow.addAll(follow.get(nextSymbol));
-                                }
-                            }
-                        } else {
-                            setFollow.addAll(follow.get(noTerminal));
+                if (proceso == 0 && finalProduccion.size() > 2) {
+                    if (Tokens.contains(finalProduccion.get(1))) {
+                        finalProduccion.add(0, "ε");
+                        if (Tokens.contains(finalProduccion.get(1))) {
+                            continue;
                         }
-
-                        // Verifica si hubo cambios en este conjunto follow
-                        if (!previousFollow.equals(setFollow)) {
-                            cambio = true;
+                    }
+                    boolean casoEspecial = false;
+                    if (noTerminal.equals(finalProduccion.get(1))) {
+                        nextProduction(finalProduccion, noTerminal, setFollow, 1);
+                        casoEspecial = true;
+                    }
+                    setFollow = follow.get(finalProduccion.get(1));
+                    previousFollow.addAll(setFollow);
+                    for (int i = 2; i < finalProduccion.size(); i++) {
+                        if (Tokens.contains(finalProduccion.get(i))) {
+                            setFollow.add(finalProduccion.get(i));
+                        } else {
+                            if (finalProduccion.get(i).equals(noTerminal)) {
+                                nextProduction(finalProduccion, noTerminal, setFollow, i);
+                            } else if (casoEspecial) {
+                                setFollow.addAll(follow.get(finalProduccion.get(i)));
+                            } else {
+                                Set<String> firstSet = first.get(finalProduccion.get(i));
+                                setFollow.addAll(firstSet);
+                            }
                         }
                     }
                 }
+                if (proceso == 1 && finalProduccion.size() <= 2) {
+                    if (Tokens.contains(finalProduccion.get(1))) {
+                        continue;
+                    }
+                    setFollow = follow.get(finalProduccion.get(1));
+                    previousFollow.addAll(setFollow);
+                    setFollow.addAll(follow.get(noTerminal));
+                }
             }
-        } while (cambio); // Repetir hasta que los conjuntos FOLLOW no cambien
+        }
     }
 
     public void printMap(Map<String, Set<String>> map, String setName) {
@@ -127,5 +141,39 @@ public class AnalisisSintacticoHelper {
             System.out.println(setElements + " }");
         }
         System.out.println();
+    }
+
+    private void nextProduction(List<String> finalProduccion, String noTerminal, Set<String> setFollow, int i) {
+        for (Produccion replaceProduccion : producciones) {
+            boolean sonIguales;
+            boolean remplazoA = false;
+            boolean simboloCambiado = false;
+            if (finalProduccion.get(0).equals("ε")) {
+                sonIguales = finalProduccion.subList(1, finalProduccion.size())
+                        .equals(replaceProduccion.getFinalProduccion());
+                remplazoA = true;
+            } else {
+                sonIguales = finalProduccion.equals(replaceProduccion.getFinalProduccion());
+                remplazoA = true;
+            }
+
+            if (!sonIguales && noTerminal.equals(replaceProduccion.getNoTerminal())) {
+                finalProduccion.set(i, replaceProduccion.getFinalProduccion().get(0));
+                simboloCambiado = true;
+            }
+            if (simboloCambiado) {
+                if (finalProduccion.get(i).equals("ε")) {
+                    Set<String> noTerminalFollow = follow.get(noTerminal);
+                    setFollow.addAll(noTerminalFollow);
+                    break;
+                } else {
+                    if (!remplazoA) {
+                        Set<String> firstSet = first.get(finalProduccion.get(i));
+                        setFollow.addAll(firstSet);
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
