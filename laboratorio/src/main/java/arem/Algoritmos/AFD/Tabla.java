@@ -27,16 +27,13 @@ public class Tabla {
             return;
         }
 
-        // Recorre el árbol hasta el nodo más a la izquierda
         traverseAndFillMap(root.getLeft(), afdNodeData);
         traverseAndFillMap(root.getRight(), afdNodeData);
 
-        // Si es el nodo más a la izquierda, agrega el nodo AFDNode al HashMap
         if (!afdNodeData.containsKey(root.getIdentifier())) {
             afdNodeData.put(root.getIdentifier(), new EstadosAFD(root));
         }
 
-        // Calcular y establecer nullable, firstpos, lastpos y followpos en EstadosAFD
         EstadosAFD estadosAFD = afdNodeData.get(root.getIdentifier());
         if (estadosAFD != null) {
             estadosAFD.setNullable(calculateNullable(root));
@@ -45,7 +42,6 @@ public class Tabla {
         }
     }
 
-    // Métodos para calcular nullable, firstpos, lastpos y followpos
     private boolean calculateNullable(nodo node) {
         if (node == null) {
             return false;
@@ -78,15 +74,12 @@ public class Tabla {
 
         switch (node.getOperatorType()) {
             case "ε":
-                // Conjunto vacío para epsilon
                 break;
             case "|":
-                // Unión de firstpos de los hijos
                 firstpos.addAll(calculateFirstpos(node.getLeft()));
                 firstpos.addAll(calculateFirstpos(node.getRight()));
                 break;
             case ".":
-                // Si el hijo izquierdo es nullable, unir firstpos de ambos hijos
                 if (afdNodeData.get(node.getLeft().getIdentifier()).isNullable()) {
                     firstpos.addAll(calculateFirstpos(node.getLeft()));
                     firstpos.addAll(calculateFirstpos(node.getRight()));
@@ -95,11 +88,9 @@ public class Tabla {
                 }
                 break;
             case "*":
-                // firstpos del hijo
                 firstpos.addAll(calculateFirstpos(node.getLeft()));
                 break;
             default:
-                // Si es un símbolo, agregar la posición del nodo
                 firstpos.add(Integer.parseInt(node.getIdentifier()));
                 break;
         }
@@ -121,15 +112,12 @@ public class Tabla {
 
         switch (node.getOperatorType()) {
             case "ε":
-                // Conjunto vacío para epsilon
                 break;
             case "|":
-                // Unión de lastpos de los hijos
                 lastpos.addAll(calculateLastpos(node.getLeft()));
                 lastpos.addAll(calculateLastpos(node.getRight()));
                 break;
             case ".":
-                // Si el hijo derecho es nullable, unir lastpos de ambos hijos
                 if (afdNodeData.get(node.getRight().getIdentifier()).isNullable()) {
                     lastpos.addAll(calculateLastpos(node.getLeft()));
                     lastpos.addAll(calculateLastpos(node.getRight()));
@@ -138,11 +126,9 @@ public class Tabla {
                 }
                 break;
             case "*":
-                // lastpos del hijo
                 lastpos.addAll(calculateLastpos(node.getLeft()));
                 break;
             default:
-                // Si es un símbolo, agregar la posición del nodo
                 lastpos.add(Integer.parseInt(node.getIdentifier()));
                 break;
         }
@@ -159,7 +145,7 @@ public class Tabla {
         calculateFollowpos(node.getRight());
     
         String operatorType = node.getOperatorType();
-        if (operatorType.equals(".")) { // Concatenation
+        if (operatorType.equals(".")) {
             nodo leftChild = node.getLeft();
             nodo rightChild = node.getRight();
     
@@ -169,15 +155,15 @@ public class Tabla {
             for (Integer position : leftChildData.getLastpos()) {
                 Set<Integer> followpos = followposTable.computeIfAbsent(position, k -> new HashSet<>());
                 followpos.addAll(rightChildData.getFirstpos());
-                afdNodeData.get(String.valueOf(position)).setFollowpos(followpos); // Agrega esta línea
+                afdNodeData.get(String.valueOf(position)).setFollowpos(followpos); 
             }
-        } else if (operatorType.equals("*")) { // Kleene star
+        } else if (operatorType.equals("*")) { 
             EstadosAFD nodeData = afdNodeData.get(node.getIdentifier());
     
             for (Integer position : nodeData.getLastpos()) {
                 Set<Integer> followpos = followposTable.computeIfAbsent(position, k -> new HashSet<>());
                 followpos.addAll(nodeData.getFirstpos());
-                afdNodeData.get(String.valueOf(position)).setFollowpos(followpos); // Agrega esta línea
+                afdNodeData.get(String.valueOf(position)).setFollowpos(followpos); 
             }
         }
     }    

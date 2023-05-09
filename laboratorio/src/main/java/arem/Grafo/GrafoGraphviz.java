@@ -106,7 +106,7 @@ public class GrafoGraphviz<T extends estados> {
             }
         }
 
-        Graphviz.useEngine(new GraphvizCmdLineEngine()); // Use GraphvizV8Engine
+        Graphviz.useEngine(new GraphvizCmdLineEngine()); 
         Graphviz.fromGraph(graph).width(1200).render(Format.PNG).toFile(new File(outputPath));
         System.out.println("Archivo '" + outputPath + "' creado.");
     }

@@ -200,8 +200,8 @@ public class LectorDeArchivos {
                     actionTokens = actionTokens.replaceAll("\\|", "").trim();
                 }
 
-                expandedAction = expandedAction.replaceAll("\\{.*?}", ""); // Eliminar contenido entre llaves
-                expandedAction = expandedAction.replaceAll("\\(\\*.*?\\*\\)", ""); // Eliminar comentarios
+                expandedAction = expandedAction.replaceAll("\\{.*?}", "");
+                expandedAction = expandedAction.replaceAll("\\(\\*.*?\\*\\)", "");
                 expandedAction = expandedAction.replaceAll("\\[", "(");
                 expandedAction = expandedAction.replaceAll("\\]", ")");
                 expandedActions.put(actionTokens, expandedAction.trim());
@@ -210,7 +210,6 @@ public class LectorDeArchivos {
     }
 
     private void printExpression() {
-        // Construir la expresión regular final
         StringBuilder finalRegex = new StringBuilder();
         for (Map.Entry<String, String> actionEntry : expandedActions.entrySet()) {
             finalRegex.append(actionEntry.getValue());
@@ -285,7 +284,7 @@ public class LectorDeArchivos {
             } else if (insideQuotes && currentChar == currentQuote) {
                 insideQuotes = false;
                 currentQuote = '\0';
-            } else if (!insideQuotes && !comment && isDefinition && afterEqualSign) { // Modifica esta línea
+            } else if (!insideQuotes && !comment && isDefinition && afterEqualSign) { 
                 if (Character.isWhitespace(currentChar) || ignoredChars.contains(currentChar)) {
                     if (currentNonQuotedExpression.length() > 0) {
                         nonQuotedExpressions.add(currentNonQuotedExpression.toString());

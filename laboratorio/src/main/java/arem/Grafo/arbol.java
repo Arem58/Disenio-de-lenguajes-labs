@@ -35,7 +35,6 @@ public class arbol {
             return;
         }
     
-        // Utiliza el atributo Label para establecer el valor del nodo
         int nodeId = treeNode.getId();
         String label = getLabel(treeNode.getValue());
         MutableNode currentNode = mutNode(Integer.toString(nodeId)).add(Label.of(label));

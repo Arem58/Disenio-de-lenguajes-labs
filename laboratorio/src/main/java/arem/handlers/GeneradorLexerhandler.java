@@ -12,7 +12,7 @@ import arem.assets.archivosJava.Expresion.ExpresionData;
 public class GeneradorLexerhandler {
 
     public GeneradorLexerhandler() {
-        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-4.yal";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;

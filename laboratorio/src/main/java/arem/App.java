@@ -10,6 +10,7 @@ import arem.handlers.AFNhandler;
 import arem.handlers.AFNtoAFDhandler;
 import arem.handlers.AFNtoAFDmini;
 import arem.handlers.GALhandler;
+import arem.handlers.GAShandler;
 import arem.handlers.GeneradorLexerhandler;
 
 /**
@@ -24,9 +25,10 @@ public final class App {
                         2. AFN --> AFD
                         3. AFN --> AFD mini
                         4. AFD
-                        5. GLA
+                        5. GAL
                         6. Generar Lexer
-                        7. Salir
+                        7. GAS
+                        8. Salir
                     ----------------------
                 """);
     }
@@ -72,6 +74,10 @@ public final class App {
                 break;
 
             case 7:
+                new GAShandler();
+                break;
+
+            case 8:
                 System.out.println("Has salido del programa");
                 break;
             default:

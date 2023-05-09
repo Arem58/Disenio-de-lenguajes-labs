@@ -28,6 +28,7 @@ public class GenerarArchivoJava {
             archivo.write("import arem.Simulacion.AFD.AFDs;\n");
             archivo.write("import arem.assets.archivosJava.Expresion.ExpresionData;\n");
             archivo.write("import arem.handlers.AFDhandler;\n");
+            archivo.write("import arem.handlers.GAShandler;\n");
             archivo.write("import arem.handlers.handler;\n\n");
             archivo.write("public class Lexer {\n\n");
             archivo.write("    private static List<Character> unsustitutedExpressions;\n");
@@ -67,6 +68,19 @@ public class GenerarArchivoJava {
             archivo.write("        } else {\n");
             archivo.write("            System.out.println(\"El mapa no se pudo cargar correctamente.\");\n");
             archivo.write("        }\n");
+            archivo.write("        GAShandler gas = new GAShandler(); \n");
+            archivo.write("        Set<String> tokensAL = gas.getTokensGAS(); \n");
+            archivo.write("        boolean error = false; \n");
+            archivo.write("        for (String token : tokensAL) { \n");
+            archivo.write("            if (!returnedTokens.contains(token)){ \n");
+            archivo.write("                error = true; \n");
+            archivo.write("                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(\"Error el token \" + token + \" no se encuentra en el generado en el yalex\").reset()); \n");
+            archivo.write("                break;");
+            archivo.write("            } \n");
+            archivo.write("        } \n");
+            archivo.write("        if (!error){ \n");
+            archivo.write("            gas.firstAndfollow(); \n");
+            archivo.write("        } \n");
             archivo.write("    }\n\n");
             archivo.write("    private static void readExpresion(String mapFileName) {\n");
             archivo.write("        ExpresionData loadedData = null;\n\n");

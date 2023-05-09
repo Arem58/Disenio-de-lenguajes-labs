@@ -18,6 +18,7 @@ import arem.Funciones.Postfix;
 import arem.Simulacion.AFD.AFDs;
 import arem.assets.archivosJava.Expresion.ExpresionData;
 import arem.handlers.AFDhandler;
+import arem.handlers.GAShandler;
 import arem.handlers.handler;
 
 public class Lexer {
@@ -69,6 +70,18 @@ public class Lexer {
         } else {
             System.out.println("El mapa no se pudo cargar correctamente.");
         }
+        GAShandler gas = new GAShandler(); 
+        Set<String> tokensAL = gas.getTokensGAS(); 
+        boolean error = false; 
+        for (String token : tokensAL) { 
+            if (!returnedTokens.contains(token)){ 
+                error = true; 
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Error el token " + token + " no se encuentra en el generado en el yalex").reset()); 
+                break;            } 
+        } 
+        if (!error){ 
+            gas.firstAndfollow(); 
+        } 
     }
 
     private static void readExpresion(String mapFileName) {

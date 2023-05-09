@@ -74,22 +74,20 @@ public class grafo<T extends estados> {
 
         for (Map.Entry<T, Map<String, Set<T>>> entry : transitions.entrySet()) {
             T estado = entry.getKey();
-            Map<String, Set<T>> transitionMap = entry.getValue(); // Mapa interno de transiciones
+            Map<String, Set<T>> transitionMap = entry.getValue();
 
-            // Recorrer el mapa interno de transiciones
             for (Map.Entry<String, Set<T>> transitionEntry : transitionMap.entrySet()) {
-                String symbol = transitionEntry.getKey(); // Símbolo de entrada
-                Set<T> destinationStates = transitionEntry.getValue(); // Conjunto de estados de destino
+                String symbol = transitionEntry.getKey(); 
+                Set<T> destinationStates = transitionEntry.getValue(); 
 
-                // Recorrer el conjunto de estados de destino
                 for (T destState : destinationStates) {
                     String edgeId = estado.toString() + destState.toString();
                     Edge edge = graph.getEdge(edgeId);
                 
-                    if (edge == null) { // Si el borde no existe, crea uno nuevo
+                    if (edge == null) { 
                         edge = graph.addEdge(edgeId, estado.toString(), destState.toString(), true);
                         edge.setAttribute("ui.label", symbol);
-                    } else { // Si el borde ya existe, actualiza su etiqueta
+                    } else { 
                         String existingLabel = (String) edge.getAttribute("ui.label");
                         edge.setAttribute("ui.label", existingLabel + ", " + symbol);
                     }

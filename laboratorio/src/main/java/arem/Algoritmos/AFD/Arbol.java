@@ -36,7 +36,6 @@ public class Arbol {
                     nodo nodoFinal = stack.pop();
                     nodo nodoInicial = stack.pop();
 
-                    // vamos a declarar las hojas de nodo
                     newNodo.setLeft(nodoInicial);
                     newNodo.setRight(nodoFinal);
 
@@ -51,7 +50,6 @@ public class Arbol {
                     nodo nodoDerecha = stack.pop();
                     nodo nodoIzquierda = stack.pop();
 
-                    // vamos a declarar las hojas de nodo
                     newNodo.setLeft(nodoIzquierda);
                     newNodo.setRight(nodoDerecha);
 
@@ -86,13 +84,4 @@ public class Arbol {
         }
         root = stack.pop();
     }
-
-    // public static void main(String[] args) throws IOException {
-    // String postfix = "ab|*a.b.b.";
-    // Arbol arbolC = new Arbol(postfix);
-    // nodo root = arbolC.getRoot();
-    // nodo.bfs(root);
-
-    // arbol.visualizeTree(root, "example.png");
-    // }
 }

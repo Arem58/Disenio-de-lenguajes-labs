@@ -49,9 +49,6 @@ public class AFN2 {
                     break;
 
                 default:
-                    // if (!Lenguaje.lenguajeInicial.contains(c)) {
-                    //     break;
-                    // }
                     if (Lenguaje.nuevoSimb.containsKey(c))
                         c = Lenguaje.nuevoSimb.get(c);
 
