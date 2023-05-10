@@ -100,7 +100,7 @@ public class AnalisisSintacticoHelper {
                     }
                     boolean casoEspecial = false;
                     if (noTerminal.equals(finalProduccion.get(1))) {
-                        nextProduction(finalProduccion, noTerminal, setFollow, 1);
+                        // nextProduction(finalProduccion, noTerminal, setFollow, 1);
                         casoEspecial = true;
                     }
                     setFollow = follow.get(finalProduccion.get(1));

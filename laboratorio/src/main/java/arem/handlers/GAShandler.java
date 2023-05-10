@@ -17,7 +17,7 @@ public class GAShandler {
     private List<Produccion> productions;
 
     public GAShandler() {
-        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yalp/slr-3.yalp";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yalp/slr-4.yalp";
         LectorDeYalp archivo = new LectorDeYalp(fileNane);
         productions = archivo.getProductions();
         tokensGAS = archivo.getReturnedTokens();
