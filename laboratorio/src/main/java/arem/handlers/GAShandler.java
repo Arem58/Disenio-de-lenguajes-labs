@@ -3,6 +3,7 @@ package arem.handlers;
 import java.util.List;
 import java.util.Set;
 
+import arem.Algoritmos.GAS.LR0;
 import arem.Algoritmos.GAS.LectorDeYalp;
 import arem.Algoritmos.GAS.Produccion;
 import arem.Funciones.AnalisisSintacticoHelper;
@@ -25,5 +26,9 @@ public class GAShandler {
     
     public void firstAndfollow(){
         AnalisisSintacticoHelper ANH = new AnalisisSintacticoHelper(productions, tokensGAS);
+    }
+
+    public void LR0(){
+        new LR0(productions);
     }
 }

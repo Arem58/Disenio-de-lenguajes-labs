@@ -3,6 +3,7 @@ package arem.Funciones;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class AnalisisSintacticoHelper {
         this.producciones = produccion;
         this.Tokens = Tokens;
         first = new HashMap<>();
-        follow = new HashMap<>();
+        follow = new LinkedHashMap<>();
         computandoFirst();
         computandoFollow();
         printMap(first, "FIRST");
@@ -109,9 +110,10 @@ public class AnalisisSintacticoHelper {
                         if (Tokens.contains(finalProduccion.get(i))) {
                             setFollow.add(finalProduccion.get(i));
                         } else {
-                            if (finalProduccion.get(i).equals(noTerminal)) {
-                                nextProduction(finalProduccion, noTerminal, setFollow, i);
-                            } else if (casoEspecial) {
+                            // if (finalProduccion.get(i).equals(noTerminal)) {
+                            //     nextProduction(finalProduccion, noTerminal, setFollow, i);
+                            // } else 
+                            if (casoEspecial) {
                                 setFollow.addAll(follow.get(finalProduccion.get(i)));
                             } else {
                                 Set<String> firstSet = first.get(finalProduccion.get(i));
