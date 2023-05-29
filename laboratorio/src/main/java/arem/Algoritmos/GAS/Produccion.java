@@ -19,11 +19,15 @@ public class Produccion {
 
     private int posicionPunto;
 
+    public boolean estadoAceptacion() {
+        return posicionPunto == finalProduccion.size();
+    }
+
     public int getPosicionPunto() {
         return posicionPunto;
     }
 
-    public void movePosicionPunto(){
+    public void movePosicionPunto() {
         posicionPunto++;
     }
 
@@ -44,22 +48,22 @@ public class Produccion {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (this == obj){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
 
-        if (obj == null || getClass() != obj.getClass()){
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         Produccion produccion = (Produccion) obj;
         return posicionPunto == produccion.posicionPunto &&
-               Objects.equals(noTerminal, produccion.noTerminal) &&
-               Objects.equals(finalProduccion, produccion.finalProduccion);
+                Objects.equals(noTerminal, produccion.noTerminal) &&
+                Objects.equals(finalProduccion, produccion.finalProduccion);
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(noTerminal, finalProduccion, posicionPunto);
     }
 }

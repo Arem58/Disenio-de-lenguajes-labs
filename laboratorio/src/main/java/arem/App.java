@@ -74,7 +74,8 @@ public final class App {
                 break;
 
             case 7:
-                new GAShandler();
+                GAShandler gasHandler = new GAShandler();
+                gasHandler.LR0();
                 break;
 
             case 8:

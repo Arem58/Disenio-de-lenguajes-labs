@@ -59,6 +59,9 @@ public class GrafoGraphviz<T extends estados> {
                 case INICIAL:
                     node.add(Color.BLUE);
                     break;
+                case ACEPTACION:
+                    node.add(Color.MAGENTA, Shape.DOUBLE_CIRCLE);
+                    break;
             }
         }
 

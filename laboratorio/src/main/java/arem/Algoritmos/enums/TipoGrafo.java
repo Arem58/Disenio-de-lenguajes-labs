@@ -4,5 +4,6 @@ public enum TipoGrafo {
     INICIAL,
     NORMAL,
     FINAL, 
-    INVALID
+    INVALID,
+    ACEPTACION
 }
