@@ -3,6 +3,8 @@ package arem.Algoritmos.GAS;
 import java.util.Map;
 import java.util.Set;
 
+import org.fusesource.jansi.Ansi;
+
 import arem.Algoritmos.enums.TipoGrafo;
 import arem.Funciones.AnalisisSintacticoHelper;
 
@@ -36,13 +38,14 @@ public class SLR1 {
     private void ConstruccionSLR1() {
         ContruccionDeLaTabla();
         Reduce();
+        imprimirTablaSLR1();
     }
 
     private void ContruccionDeLaTabla() {
         for (EstadoGAS estadoGAS : listaEstados) {
             Map<String, Set<EstadoGAS>> transiciones = LR0.get(estadoGAS);
             Map<String, String> contenido = new LinkedHashMap<>();
-            if (transiciones != null){
+            if (transiciones != null) {
                 for (Map.Entry<String, Set<EstadoGAS>> transicion : transiciones.entrySet()) {
                     String simbolo = transicion.getKey();
                     Set<EstadoGAS> estado = transicion.getValue();
@@ -87,7 +90,7 @@ public class SLR1 {
                     if (produccion.equalsProducciones(actualProduccion) && produccion.estadoAceptacion()) {
                         for (Map.Entry<String, Set<String>> followActual : follow.entrySet()) {
                             String noTerminal = followActual.getKey();
-                            if (noTerminal.equals(produccion.getNoTerminal())){
+                            if (noTerminal.equals(produccion.getNoTerminal())) {
                                 Set<String> listaSimbolos = followActual.getValue();
                                 for (String simbolo : listaSimbolos) {
                                     contenido.put(simbolo, redux);
@@ -99,18 +102,37 @@ public class SLR1 {
             }
             String ID = estadoGAS.getId().substring(1);
             Map<String, String> mapaExistente = tablaSLR1.get(ID);
-            if (mapaExistente == null){
+            if (mapaExistente == null) {
                 tablaSLR1.put(ID, contenido);
-            }else{
-                for (Map.Entry<String, String> entry : contenido.entrySet()){
+            } else {
+                for (Map.Entry<String, String> entry : contenido.entrySet()) {
                     String key = entry.getKey();
-                    if (mapaExistente.containsKey(key)){
-                        throw new IllegalStateException("Ya existe una entrada para la llave: " + key + " en el estado para ID: " + estadoGAS.getId());
-                    }else{
+                    if (mapaExistente.containsKey(key)) {
+                        throw new IllegalStateException("Ya existe una entrada para la llave: " + key
+                                + " en el estado para ID: " + estadoGAS.getId());
+                    } else {
                         mapaExistente.put(key, entry.getValue());
                     }
                 }
             }
         }
     }
+
+    public void imprimirTablaSLR1() {
+        for (Map.Entry<String, Map<String, String>> entry : tablaSLR1.entrySet()) {
+            String key1 = entry.getKey();
+            Map<String, String> innerMap = entry.getValue();
+    
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("┌───────────────────────────────────────────┐").reset());
+    
+            for (Map.Entry<String, String> innerEntry : innerMap.entrySet()) {
+                String key2 = innerEntry.getKey();
+                String value = innerEntry.getValue();
+    
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("│").reset() + " " + key1 + "[" + key2 + "] -> " + value + Ansi.ansi().fg(Ansi.Color.RED).a(" │").reset());
+            }
+    
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("└───────────────────────────────────────────┘").reset());
+        }
+    }    
 }
