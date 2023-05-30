@@ -80,10 +80,15 @@ public class Lexer {
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Error el token " + token + " no se encuentra en el generado en el yalex").reset()); 
                 break;            } 
         } 
+
         if (!error){ 
-            gas.LR0(); 
-            gas.SLR1();
-            // gas.firstAndfollow();
+            try{ 
+                 gas.LR0(); 
+                 gas.SLR1(); 
+            } catch(Exception e){ 
+                 System.err.println("Ha ocurrido un error durante la ejecución. El programa se cerrará."); 
+                 System.exit(1); 
+            } 
         } 
     }
 

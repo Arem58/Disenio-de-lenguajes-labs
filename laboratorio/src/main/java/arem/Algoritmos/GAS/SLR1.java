@@ -108,8 +108,9 @@ public class SLR1 {
                 for (Map.Entry<String, String> entry : contenido.entrySet()) {
                     String key = entry.getKey();
                     if (mapaExistente.containsKey(key)) {
-                        throw new IllegalStateException("Ya existe una entrada para la llave: " + key
+                        System.err.println("Ya existe una entrada para la llave: " + key
                                 + " en el estado para ID: " + estadoGAS.getId());
+                        System.exit(1);
                     } else {
                         mapaExistente.put(key, entry.getValue());
                     }
@@ -122,17 +123,20 @@ public class SLR1 {
         for (Map.Entry<String, Map<String, String>> entry : tablaSLR1.entrySet()) {
             String key1 = entry.getKey();
             Map<String, String> innerMap = entry.getValue();
-    
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("┌───────────────────────────────────────────┐").reset());
-    
+
+            System.out
+                    .println(Ansi.ansi().fg(Ansi.Color.RED).a("┌───────────────────────────────────────────┐").reset());
+
             for (Map.Entry<String, String> innerEntry : innerMap.entrySet()) {
                 String key2 = innerEntry.getKey();
                 String value = innerEntry.getValue();
-    
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("│").reset() + " " + key1 + "[" + key2 + "] -> " + value + Ansi.ansi().fg(Ansi.Color.RED).a(" │").reset());
+
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("│").reset() + " " + key1 + "[" + key2 + "] -> "
+                        + value + Ansi.ansi().fg(Ansi.Color.RED).a(" │").reset());
             }
-    
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("└───────────────────────────────────────────┘").reset());
+
+            System.out
+                    .println(Ansi.ansi().fg(Ansi.Color.RED).a("└───────────────────────────────────────────┘").reset());
         }
-    }    
+    }
 }
