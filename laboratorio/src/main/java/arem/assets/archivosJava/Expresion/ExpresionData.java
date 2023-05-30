@@ -8,12 +8,15 @@ import java.util.Set;
 
 public class ExpresionData implements Serializable {
     private List<Character> unsustitutedExpressions;
+    private Map<String, String> dictionaryTokens;
     private Map<String, String> expandedActions;
     private Set<String> returnedTokens;
     private Set<String> tokens;
 
-    public ExpresionData(Map<String, String> expandedActions, Set<String> returnedTokens, Set<String> tokens, List<Character> unsustitutedExpressions) {
+    public ExpresionData(Map<String, String> expandedActions, Map<String, String> dictionaryTokens,
+            Set<String> returnedTokens, Set<String> tokens, List<Character> unsustitutedExpressions) {
         this.expandedActions = expandedActions;
+        this.dictionaryTokens = dictionaryTokens;
         this.returnedTokens = returnedTokens;
         this.tokens = new HashSet<>(tokens);
         this.unsustitutedExpressions = unsustitutedExpressions;
@@ -21,6 +24,10 @@ public class ExpresionData implements Serializable {
 
     public Map<String, String> getExpandedActions() {
         return expandedActions;
+    }
+
+    public Map<String, String> getDictionaryTokens() {
+        return dictionaryTokens;
     }
 
     public Set<String> getReturnedTokens() {

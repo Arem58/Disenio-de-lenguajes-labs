@@ -33,8 +33,8 @@ public class AnalisisSintacticoHelper {
         first = new HashMap<>();
         follow = new LinkedHashMap<>();
         computandoFirst();
-        computandoFollow();
         printMap(first, "FIRST");
+        computandoFollow();
         printMap(follow, "FOLLOW");
     }
 

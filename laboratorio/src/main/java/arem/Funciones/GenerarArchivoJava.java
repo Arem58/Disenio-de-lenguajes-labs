@@ -33,6 +33,7 @@ public class GenerarArchivoJava {
             archivo.write("public class Lexer {\n\n");
             archivo.write("    private static List<Character> unsustitutedExpressions;\n");
             archivo.write("    private static Map<String, String> expandedActions;\n");
+            archivo.write("    private static Map<String, String> dictionaryTokens;\n");
             archivo.write("    private static Set<String> returnedTokens;\n");
             archivo.write("    private static Set<String> Tokens;\n\n");
             archivo.write("    public static void main(String[] args) {\n");
@@ -68,7 +69,7 @@ public class GenerarArchivoJava {
             archivo.write("        } else {\n");
             archivo.write("            System.out.println(\"El mapa no se pudo cargar correctamente.\");\n");
             archivo.write("        }\n");
-            archivo.write("        GAShandler gas = new GAShandler(); \n");
+            archivo.write("        GAShandler gas = new GAShandler(dictionaryTokens); \n");
             archivo.write("        Set<String> tokensAL = gas.getTokensGAS(); \n");
             archivo.write("        boolean error = false; \n");
             archivo.write("        for (String token : tokensAL) { \n");
@@ -79,7 +80,7 @@ public class GenerarArchivoJava {
             archivo.write("            } \n");
             archivo.write("        } \n");
             archivo.write("        if (!error){ \n");
-            archivo.write("            gas.firstAndfollow(); \n");
+            archivo.write("            gas.LR0(); \n");
             archivo.write("        } \n");
             archivo.write("    }\n\n");
             archivo.write("    private static void readExpresion(String mapFileName) {\n");
@@ -91,6 +92,7 @@ public class GenerarArchivoJava {
             archivo.write("        }\n\n");
             archivo.write("        if (loadedData != null) {\n");
             archivo.write("            expandedActions = loadedData.getExpandedActions();\n");
+            archivo.write("            dictionaryTokens = loadedData.getDictionaryTokens();\n");
             archivo.write("            returnedTokens = loadedData.getReturnedTokens();\n");
             archivo.write("            Tokens = loadedData.getTokens();\n");
             archivo.write("            unsustitutedExpressions = loadedData.getValidExpressions();\n");

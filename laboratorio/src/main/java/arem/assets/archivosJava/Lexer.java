@@ -25,6 +25,7 @@ public class Lexer {
 
     private static List<Character> unsustitutedExpressions;
     private static Map<String, String> expandedActions;
+    private static Map<String, String> dictionaryTokens;
     private static Set<String> returnedTokens;
     private static Set<String> Tokens;
 
@@ -70,17 +71,19 @@ public class Lexer {
         } else {
             System.out.println("El mapa no se pudo cargar correctamente.");
         }
-        GAShandler gas = new GAShandler(); 
+        GAShandler gas = new GAShandler(dictionaryTokens); 
         Set<String> tokensAL = gas.getTokensGAS(); 
         boolean error = false; 
         for (String token : tokensAL) { 
-            if (!returnedTokens.contains(token)){ 
+            if (!dictionaryTokens.values().contains(token)){ 
                 error = true; 
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Error el token " + token + " no se encuentra en el generado en el yalex").reset()); 
                 break;            } 
         } 
         if (!error){ 
-            gas.firstAndfollow(); 
+            gas.LR0(); 
+            gas.SLR1();
+            // gas.firstAndfollow();
         } 
     }
 
@@ -95,6 +98,7 @@ public class Lexer {
 
         if (loadedData != null) {
             expandedActions = loadedData.getExpandedActions();
+            dictionaryTokens = loadedData.getDictionaryTokens();
             returnedTokens = loadedData.getReturnedTokens();
             Tokens = loadedData.getTokens();
             unsustitutedExpressions = loadedData.getValidExpressions();

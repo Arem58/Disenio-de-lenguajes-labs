@@ -2,6 +2,7 @@ package arem.handlers;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import arem.Algoritmos.GAS.EstadoGAS;
@@ -11,6 +12,7 @@ import arem.Algoritmos.GAS.Produccion;
 import arem.Algoritmos.GE.GEString;
 import arem.Funciones.AnalisisSintacticoHelper;
 import arem.Grafo.GrafoGraphviz;
+import arem.Algoritmos.GAS.SLR1;;
 
 public class GAShandler {
     private Set<String> tokensGAS;
@@ -22,9 +24,9 @@ public class GAShandler {
 
     private List<Produccion> productions;
 
-    public GAShandler() {
+    public GAShandler(Map<String, String> dictionaryTokens) {
         String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yalp/slr-1.yalp";
-        LectorDeYalp archivo = new LectorDeYalp(fileNane);
+        LectorDeYalp archivo = new LectorDeYalp(fileNane, dictionaryTokens);
         productions = archivo.getProductions();
         tokensGAS = archivo.getReturnedTokens();
     }
@@ -40,6 +42,10 @@ public class GAShandler {
         GrafoGraphviz<EstadoGAS> grafoGraphviz = new GrafoGraphviz<>(geLR0);
         String outputPath = "laboratorio/src/main/java/arem/assets/outputs/grafoLR0.png";
         createGraph(grafoGraphviz, outputPath);
+    }
+
+    public void SLR1(){
+        new SLR1(geLR0.getTransitions(), productions, geLR0.getListaEstados(), tokensGAS);
     }
 
     private void createGraph(GrafoGraphviz<EstadoGAS> grafoGraphviz, String outputPath) {

@@ -12,12 +12,12 @@ import arem.assets.archivosJava.Expresion.ExpresionData;
 public class GeneradorLexerhandler {
 
     public GeneradorLexerhandler() {
-        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-4.yal";
+        String fileNane = "laboratorio/src/main/java/arem/assets/Archivos Yal/slr-1.yal";
         LectorDeArchivos archivo = new LectorDeArchivos(fileNane);
         if (archivo.isHasError()) {
             return;
         }
-        ExpresionData data = new ExpresionData(archivo.getExpandedActions(), archivo.getReturnedTokens(),
+        ExpresionData data = new ExpresionData(archivo.getExpandedActions(), archivo.getDictionaryTokens(), archivo.getReturnedTokens(),
                 archivo.getExpandedActions().keySet(), archivo.getUnsustitutedExpressions());
 
         String mapFileName = "laboratorio/src/main/java/arem/assets/archivosJava/Expresion/expanded_actions.dat";

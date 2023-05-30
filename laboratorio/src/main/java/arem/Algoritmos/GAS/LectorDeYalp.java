@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.math.estimation.EstimationException;
+
 public class LectorDeYalp {
     private final String TOKEN_PATTERN = "%token(?:\\s+(\\w+))+";
     private final String TOKEN_IGNORE = "IGNORE\\s+(\\w+)";
@@ -20,6 +22,9 @@ public class LectorDeYalp {
 
     public static Map<String, String> simbNoTerminal = new HashMap<>();
     private Set<String> returnedTokens;
+    private Set<String> tokensSet;
+
+    private Map<String, String> dictionaryTokens;
 
     private List<Produccion> productions;
 
@@ -33,9 +38,11 @@ public class LectorDeYalp {
 
     private String fileName;
 
-    public LectorDeYalp(String fileName) {
+    public LectorDeYalp(String fileName, Map<String, String> dictionaryTokens) {
         this.fileName = fileName;
+        this.dictionaryTokens = dictionaryTokens; // Son los tokens de GAL
         returnedTokens = new HashSet<>();
+        tokensSet = new HashSet<>();
         productions = new LinkedList<>();
         readingFile();
     }
@@ -66,10 +73,12 @@ public class LectorDeYalp {
                     tokensSectionFound = true;
                     String[] tokens = line.replace("%token", "").trim().split("\\s+");
                     for (String token : tokens) {
-                        returnedTokens.add(token);
+                        tokensSet.add(token);
+                        returnedTokens.add(getGALtoken(token));
                     }
                 } else if (ignoreToken.find() && tokensSectionFound) {
-                    returnedTokens.remove(ignoreToken.group(1));
+                    returnedTokens.remove(getGALtoken(ignoreToken.group(1)));
+                    tokensSet.remove(ignoreToken.group(1));
                 } else if (divisorMatcher.find()) {
                     productionsSectionFound = true;
                 } else {
@@ -104,7 +113,11 @@ public class LectorDeYalp {
                                     if (getNoTerminal(simbol) != null) {
                                         simbolos.add(getNoTerminal(simbol));
                                     } else {
-                                        simbolos.add(simbol);
+                                        if (!dictionaryTokens.isEmpty()) {
+                                            simbolos.add(getGALtoken(simbol));
+                                        } else {
+                                            simbolos.add(simbol);
+                                        }
                                     }
                                 }
                             }
@@ -122,7 +135,7 @@ public class LectorDeYalp {
     }
 
     private String getNoTerminal(String noTerminal) {
-        if (returnedTokens.contains(noTerminal)) {
+        if (tokensSet.contains(noTerminal)) {
             return null;
         }
 
@@ -132,5 +145,13 @@ public class LectorDeYalp {
         simbNoTerminal.put(String.valueOf(c), noTerminal);
 
         return String.valueOf(c);
+    }
+
+    private String getGALtoken(String token) {
+        String replacedToken = dictionaryTokens.get(token);
+        if (replacedToken != null) {
+            token = replacedToken;
+        }
+        return token;
     }
 }

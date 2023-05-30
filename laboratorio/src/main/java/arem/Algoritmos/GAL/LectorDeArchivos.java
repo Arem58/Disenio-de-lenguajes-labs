@@ -18,6 +18,8 @@ public class LectorDeArchivos {
     private final String LET_PATTERN = "let\\s+(\\w+)\\s*=\\s*(.+)";
     private final String RULE_PATTERN = "rule\\s+(tokens)\\s*=\\s*(.+)";
     private Map<String, String> expandedActions;
+    private Map<String, String> dictionaryTokens;
+
     private Set<String> returnedTokens;
     private List<Character> unsustitutedExpressions;
 
@@ -29,6 +31,10 @@ public class LectorDeArchivos {
     String fileName;
 
     private boolean hasError;
+
+    public Map<String, String> getDictionaryTokens() {
+        return dictionaryTokens;
+    }
 
     public List<Character> getUnsustitutedExpressions() {
         return unsustitutedExpressions;
@@ -49,6 +55,7 @@ public class LectorDeArchivos {
     public LectorDeArchivos(String fileName) {
         this.fileName = fileName;
         expandedActions = new LinkedHashMap<>();
+        dictionaryTokens = new HashMap<>();
         returnedTokens = new HashSet<>();
         unsustitutedExpressions = new ArrayList<>();
         header = new ArrayList<>();
@@ -195,6 +202,7 @@ public class LectorDeArchivos {
                     actionTokens = returnMatcher.group(1);
                     actionTokens = actionTokens.replaceAll("return", "").trim();
                     returnedTokens.add(actionTokens);
+                    setDictionaryTokens(action, actionTokens);
                 } else {
                     actionTokens = action;
                     actionTokens = actionTokens.replaceAll("\\|", "").trim();
@@ -284,7 +292,7 @@ public class LectorDeArchivos {
             } else if (insideQuotes && currentChar == currentQuote) {
                 insideQuotes = false;
                 currentQuote = '\0';
-            } else if (!insideQuotes && !comment && isDefinition && afterEqualSign) { 
+            } else if (!insideQuotes && !comment && isDefinition && afterEqualSign) {
                 if (Character.isWhitespace(currentChar) || ignoredChars.contains(currentChar)) {
                     if (currentNonQuotedExpression.length() > 0) {
                         nonQuotedExpressions.add(currentNonQuotedExpression.toString());
@@ -368,5 +376,15 @@ public class LectorDeArchivos {
             return false;
         }
         return true;
+    }
+
+    private void setDictionaryTokens(String action, String actionTokens) {
+        String actionDic = action;
+        String actionTokensDic = actionTokens;
+        actionDic = actionDic.replaceAll("\\|", "").trim();
+        actionDic = actionDic.replaceAll("\\{.*?}", "");
+        actionDic = actionDic.replaceAll("\\(\\*.*?\\*\\)", "");
+        actionDic = actionDic.replaceAll("'", "");
+        dictionaryTokens.put(actionTokensDic, actionDic.trim());
     }
 }

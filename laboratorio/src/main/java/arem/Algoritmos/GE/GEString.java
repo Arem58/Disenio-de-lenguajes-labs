@@ -2,6 +2,7 @@ package arem.Algoritmos.GE;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,6 @@ public class GEString<T extends estados>{
 
     public GEString(Map<T, Map<String, Set<T>>> transitions, Set<T> estados) {
         this.transitions = new HashMap<>(transitions);
-        this.listaEstados = new HashSet<>(estados);
+        this.listaEstados = new LinkedHashSet<>(estados);
     }
 }

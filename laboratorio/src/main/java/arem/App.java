@@ -1,6 +1,8 @@
 package arem;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Scanner;
 
 import arem.Simulacion.AFD.AFDs;
@@ -74,7 +76,7 @@ public final class App {
                 break;
 
             case 7:
-                GAShandler gasHandler = new GAShandler();
+                GAShandler gasHandler = new GAShandler(Collections.emptyMap());
                 gasHandler.LR0();
                 break;
 

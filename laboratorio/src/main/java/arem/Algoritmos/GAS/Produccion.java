@@ -47,6 +47,19 @@ public class Produccion {
         this.posicionPunto = other.posicionPunto;
     }
 
+    public boolean equalsProducciones(Produccion other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null) {
+            return false;
+        }
+
+        return Objects.equals(noTerminal, other.noTerminal) &&
+                Objects.equals(finalProduccion, other.finalProduccion);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
